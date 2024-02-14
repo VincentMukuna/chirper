@@ -29,7 +29,7 @@ class ChirpPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -45,7 +45,7 @@ class ChirpPolicy
      */
     public function delete(User $user, Chirp $chirp): bool
     {
-        //
+       return $this->update($user, $chirp);
     }
 
     /**
