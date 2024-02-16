@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ChirpLiked;
 use App\Models\Chirp;
+use App\Notifications\LikeChirp;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
@@ -13,11 +15,17 @@ class ChirpController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index():Response
+    public function index(): Response
     {
-        return Inertia::render('Chirps/Index', [
-           'chirps' =>Chirp::with('user:id,name')->latest()->get()
-        ]);
+        $chirps = Chirp::with('user:id,name')->latest()->withCount('likes')->get();
+
+        $userId = auth()->id();
+        $chirps->map(function ($chirp) use ($userId) {
+            $chirp->isLike = $chirp->likes()->where('user_id', $userId)->exists();
+            return $chirp;
+        });
+
+        return Inertia::render('Chirps/Index', compact('chirps'));
     }
 
     /**
@@ -83,5 +91,16 @@ class ChirpController extends Controller
         $chirp->delete();
 
         return redirect(route('chirps.index'));
+    }
+
+    public function like(Chirp $chirp)
+    {
+        $chirp->likes()->attach(auth()->id());
+        ChirpLiked::dispatch($chirp, auth()->user());
+    }
+
+    public function dislike(Chirp $chirp)
+    {
+        $chirp->likes()->detach(auth()->id());
     }
 }
