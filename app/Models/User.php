@@ -63,12 +63,12 @@ class User extends Authenticatable
 
     public function isFollowing(string $id):bool
     {
-        return $this->following()->wherePivot('user_id', $id)->exists();
+        return $this->following()->where('user_id', $id)->exists();
     }
 
     public function isFollowedBy(string $id):bool
     {
-        return $this->followers()->wherePivot('follower_id', $id)->exists();
+        return $this->followers()->where('follower_id', $id)->exists();
     }
 
 

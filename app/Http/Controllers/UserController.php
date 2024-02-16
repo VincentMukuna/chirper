@@ -29,22 +29,9 @@ class UserController extends Controller
         }
     }
     public function follow( User $user){
-        $validator = Validator::make(['user_id'=>$user->id],[
-            'user_id'=>'different:'.auth()->id()
-            ],
-            [
-                'user_id.different'=>'You cannot follow yourself. '
-            ]
-        );
 
-        if($validator->fails()){
-            return back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        if($user->isFollowing(auth()->id())){
-            return back()->with('warning', "Already following $user->name");
+        if ($user->is(auth()->user())){
+            dd("Can't follow yourself");
         }
 
         auth()->user()->following()->attach($user->id);

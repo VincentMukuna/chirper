@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
-import {Link, useForm, usePage,} from "@inertiajs/react";
+import {Link, useForm, usePage,router} from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown.jsx";
 import InputError from "@/Components/InputError.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
@@ -11,11 +11,51 @@ dayjs.extend(relativeTime);
 export default function Chirp({chirp}) {
     const {auth} = usePage().props;
 
+
+
+    const [likes, setLikes] = useState(chirp.likes_count);
     const  [editing, setEditing] = useState(false);
 
     const {data, setData, patch, clearErrors, reset, errors} = useForm({
         message: chirp.message,
     })
+
+
+    const onToggleLike=()=>{
+        if(chirp.isLike){
+            chirp.isLike = false;
+            setLikes(prev=>prev-1)
+            router.patch(
+                route('chirps.dislike', {chirp:chirp.id}),
+                {}
+                ,
+                {
+                    onError:(e)=>{
+                        chirp.isLike = false;
+                        console.log('Error: ', e)
+                        setLikes(prev=>prev+1)
+                    },
+                    preserveScroll:true,
+                    preserveState:true,
+                })
+        }else{
+            chirp.isLike = true;
+            setLikes(prev=>prev+1)
+            router.patch(
+                route('chirps.like', {chirp:chirp.id}),
+                {},
+                {
+                    onError:(e)=>{
+                        chirp.isLike = false;
+                        console.log('Error: ', e)
+                        setLikes(prev=>prev-1)
+                    },
+                    preserveScroll:true,
+                    preserveState:true,
+                })
+        }
+
+    }
 
     const submit = (e) => {
         e.preventDefault();
@@ -34,11 +74,11 @@ export default function Chirp({chirp}) {
             </svg>
             <div className="flex-1">
                 <div className="flex justify-between items-center">
-                    <div>
+                    <div className='flex items-center gap-2'>
                         <Link href={`users/${chirp.user.id}/profile`} className="text-gray-800">{chirp.user.name}</Link>
                         <small className="ml-2 text-xs text-gray-500">{dayjs(chirp.created_at).fromNow()}</small>
                         {chirp.created_at !== chirp.updated_at &&
-                            <small className="text-xs text-gray-600">&middot; edited</small>}
+                            <small className="text-xs text-gray-700">&middot; edited</small>}
                     </div>
 
                     {chirp.user.id === auth.user.id &&
@@ -80,7 +120,12 @@ export default function Chirp({chirp}) {
                             </button>
                         </div>
                     </form>
-                    : <p className="mt-4 text-lg test-gray-900">{chirp.message}</p>
+                    : <p className="mt-3 text-lg test-gray-900 flex flex-col gap-1">
+                        {chirp.message}
+                        <button onClick={()=>onToggleLike()} className="tex-xs text-gray-400 self-start">
+                            {chirp.isLike?"❤️":"🤍"} <span className='text-sm'>{likes}</span>
+                        </button>
+                    </p>
                 }
             </div>
 
