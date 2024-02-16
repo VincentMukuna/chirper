@@ -6,9 +6,6 @@ export default function UserProfile({auth, user, userFollows, warning}){
     const {data, setData, post, processing, reset, errors, } = useForm({
 
     })
-    const{props,} = usePage()
-    console.log(props)
-    console.log(userFollows);
     const onToggleFollow=()=>{
         post(route('user.toggle-follow', {user:user.id}))
     }
@@ -31,8 +28,11 @@ export default function UserProfile({auth, user, userFollows, warning}){
                     </div>
 
                     <div>
-                        <PrimaryButton onClick={()=>onToggleFollow()}>{userFollows?"Unfollow":"Follow"}</PrimaryButton>
-                    </div>
+                        {user.id!==auth.id
+                            ? null :
+                            <PrimaryButton
+                                onClick={() => onToggleFollow()}>{userFollows ? "Unfollow" : "Follow"}</PrimaryButton>
+                        }</div>
                 </div>
 
             </div>
