@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -40,4 +41,15 @@ Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 
+Route::middleware(['auth', 'verified'])->group(function (){
+    Route::get('users/{user}/profile', [UserController::class, 'profile']);
+
+    Route::post('users/{user}/follow', [UserController::class, 'follow'])
+        ->name('user.follow');
+
+    Route::post('users/{user}/unfollow', [UserController::class, 'unfollow'])
+        ->name('user.unfollow');
+    Route::post('users/{user}/toggle-follow', [UserController::class, 'toggleFollow'])
+        ->name('user.toggle-follow');
+});
 require __DIR__.'/auth.php';

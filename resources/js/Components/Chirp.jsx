@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
-import {useForm, usePage} from "@inertiajs/react";
+import {Link, useForm, usePage,} from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown.jsx";
 import InputError from "@/Components/InputError.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
@@ -35,7 +35,7 @@ export default function Chirp({chirp}) {
             <div className="flex-1">
                 <div className="flex justify-between items-center">
                     <div>
-                        <span className="text-gray-800">{chirp.user.name}</span>
+                        <Link href={`users/${chirp.user.id}/profile`} className="text-gray-800">{chirp.user.name}</Link>
                         <small className="ml-2 text-xs text-gray-500">{dayjs(chirp.created_at).fromNow()}</small>
                         {chirp.created_at !== chirp.updated_at &&
                             <small className="text-xs text-gray-600">&middot; edited</small>}
