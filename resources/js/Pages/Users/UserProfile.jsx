@@ -28,7 +28,7 @@ export default function UserProfile({auth, user, userFollows, warning}){
                     </div>
 
                     <div>
-                        {user.id!==auth.id
+                        {user.id === auth.user.id
                             ? null :
                             <PrimaryButton
                                 onClick={() => onToggleFollow()}>{userFollows ? "Unfollow" : "Follow"}</PrimaryButton>

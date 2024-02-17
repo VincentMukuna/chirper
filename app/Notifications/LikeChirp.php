@@ -10,15 +10,17 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class NewChirp extends Notification
+class LikeChirp extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Chirp $chirp)
-    {}
+    public function __construct(public Chirp $chirp, public User $liker)
+    {
+        //
+    }
 
     /**
      * Get the notification's delivery channels.
@@ -36,23 +38,25 @@ class NewChirp extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject("New Chirp from {$this->chirp->user->name}")
-                    ->greeting("New Chirp from {$this->chirp->user->name}")
-                    ->line(Str::limit($this->chirp->message, 50))
-                    ->action('Go to Chirper', url('/'))
-                    ->line('Thank you for using our application!');
+            ->subject($this->liker->name." liked your post : ".Str::limit($this->chirp->message, 20))
+            ->greeting("Like from ".$this->liker->name)
+            ->line(Str::limit($this->chirp->message, 50))
+            ->action('Go to Chirper', url('/'))
+            ->line('Thank you for using our application!');
     }
 
-    public function toDatabase(object $notifiable): array
+    public function toDatabase(object $notifiable):array
     {
         return [
-            'chirp' => $this->chirp,
+            'liker'=>$this->liker,
+            'chirp'=>$this->chirp,
         ];
+
     }
 
-    public function shouldSend(User $notifiable): bool
+    public function shouldSend(object $notifiable): bool
     {
-        return $notifiable->isFollowing($this->chirp->user->id);
+        return $notifiable->id !== $this->liker->id;
     }
 
     /**

@@ -20,6 +20,8 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
-        "dayjs": "^1.11.10"
+        "clsx": "^2.1.0",
+        "dayjs": "^1.11.10",
+        "tailwind-merge": "^2.2.1"
     }
 }

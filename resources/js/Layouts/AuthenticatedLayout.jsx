@@ -4,9 +4,11 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
+import headerNavLinks from "@/data/headerNavLinks.js";
 
-export default function Authenticated({ user, header, children }) {
+export default function AuthenticatedLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -21,12 +23,12 @@ export default function Authenticated({ user, header, children }) {
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
-                                    Dashboard
-                                </NavLink>
-                                <NavLink href={route('chirps.index')} active={route().current('chirps.index')}>
-                                    Chirps
-                                </NavLink>
+                                {headerNavLinks.map((link) => (
+                                    <NavLink key={link.name} href={route(link.name)} active={route().current(link.name)}>
+                                        {link.label}
+                                    </NavLink>
+                                ))}
+
                             </div>
                         </div>
 
@@ -95,12 +97,15 @@ export default function Authenticated({ user, header, children }) {
 
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
                     <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            Dashboard
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('chirps.index')} active={route().current('chirps.index')}>
-                            Chirps
-                        </ResponsiveNavLink>
+                        {
+                            headerNavLinks.map((link) => (
+                                <ResponsiveNavLink key={link.name} href={route(link.name)} active={route().current(link.name)}>
+                                    {link.label}
+                                </ResponsiveNavLink>
+                            ))
+                        }
+
+
 
                     </div>
 

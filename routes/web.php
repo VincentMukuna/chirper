@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChirpController;
+use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -38,8 +39,26 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('chirps', ChirpController::class)
-    ->only(['index', 'store', 'update', 'destroy'])
+    ->only(['index', 'store', 'update', 'destroy', ''])
     ->middleware(['auth', 'verified']);
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::patch('chirps/{chirp}/like', [ChirpController::class, 'like'])->name('chirps.like');
+    Route::patch('chirps/{chirp}/dislike', [ChirpController::class, 'dislike'])->name('chirps.dislike');
+});
+
+Route::middleware(['auth', 'verified'])->group(function (){
+    Route::get('notifications', [NotificationsController::class, 'index'])
+        ->name('notifications.index');
+    Route::patch('notifications/mark-all-as-read', [NotificationsController::class, 'markAllAsRead'])
+        ->name('notifications.mark-all-as-read');
+
+    Route::patch('notifications/{notification}/mark-as-read', [NotificationsController::class, 'markAsRead'])
+        ->name('notifications.mark-as-read');
+    Route::delete('notifications/{notification}', [NotificationsController::class, 'destroy'])
+        ->name('notifications.destroy');
+
+});
 
 Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('users/{user}/profile', [UserController::class, 'profile']);

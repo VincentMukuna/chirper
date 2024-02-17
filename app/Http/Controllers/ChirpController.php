@@ -25,7 +25,8 @@ class ChirpController extends Controller
             return $chirp;
         });
 
-        return Inertia::render('Chirps/Index', compact('chirps'));
+        return Inertia::render('Chirps/Index',
+            ['chirps'=>$chirps]);
     }
 
     /**
