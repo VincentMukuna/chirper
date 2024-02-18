@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import {Head, useForm} from "@inertiajs/react";
+import {Head, router} from "@inertiajs/react";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import {Tab} from "@headlessui/react";
 import Chirp from "@/Components/Chirp.jsx";
@@ -11,13 +11,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 export default function UserProfile({auth, user, userFollows}){
-
-    const {data, setData, post, processing, reset, errors, } = useForm({
-
-    })
     const [selectedTab, setSelectedTab] = useState(0);
     const onToggleFollow=()=>{
-        post(route('user.toggle-follow', {user:user.id}))
+        router.post(route('user.toggle-follow', {user:user.id}))
     }
 
     return(
