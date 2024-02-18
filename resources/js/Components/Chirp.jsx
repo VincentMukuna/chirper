@@ -36,7 +36,6 @@ export default function Chirp({chirp}) {
                         setLikes(prev=>prev+1)
                     },
                     preserveScroll:true,
-                    preserveState:true,
                 })
         }else{
             chirp.isLike = true;
@@ -51,7 +50,6 @@ export default function Chirp({chirp}) {
                         setLikes(prev=>prev-1)
                     },
                     preserveScroll:true,
-                    preserveState:true,
                 })
         }
 
@@ -66,24 +64,34 @@ export default function Chirp({chirp}) {
         });
     }
     return (
-        <div className="p-6 flex space-x-2 ">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600 -scale-x-100" fill="none"
-                 viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round"
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-            </svg>
+        <div className="p-6 flex space-x-2 hover:bg-gray-50 cursor-pointer transition-all">
+            {chirp.replying_to!==null
+                ? <Link href={route('chirps.show', {chirp: chirp.replying_to})}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                        <path fill="#888888"
+                              d="M10 9V7.41c0-.89-1.08-1.34-1.71-.71L3.7 11.29a.996.996 0 0 0 0 1.41l4.59 4.59c.63.63 1.71.19 1.71-.7V14.9c5 0 8.5 1.6 11 5.1c-1-5-4-10-11-11"/>
+                    </svg>
+                </Link>
+
+                : <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600 -scale-x-100" fill="none"
+                       viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>}
+
             <div className="flex-1">
                 <div className="flex justify-between items-center">
                     <div className='flex items-center gap-2'>
-                        <Link href={`users/${chirp.user.id}/profile`} className="text-gray-800">{chirp.user.name}</Link>
+                        <Link href={route('user.profile', {user:chirp.user.id})} className="text-gray-800 hover:underline">{chirp.user.name}</Link>
+
                         <small className="ml-2 text-xs text-gray-500">{dayjs(chirp.created_at).fromNow()}</small>
                         {chirp.created_at !== chirp.updated_at &&
                             <small className="text-xs text-gray-700">&middot; edited</small>}
                     </div>
 
                     {chirp.user.id === auth.user.id &&
-                        <Dropdown>
-                            <Dropdown.Trigger>
+                        <Dropdown >
+                            <Dropdown.Trigger >
                                 <button>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400"
                                          viewBox="0 0 20 20" fill="currentColor">
@@ -120,12 +128,16 @@ export default function Chirp({chirp}) {
                             </button>
                         </div>
                     </form>
-                    : <p className="mt-3 text-lg test-gray-900 flex flex-col gap-1">
+                    : <Link  href={route('chirps.show', [chirp.id])} className="mt-3 text-lg test-gray-900 flex flex-col gap-1">
                         {chirp.message}
-                        <button onClick={()=>onToggleLike()} className="tex-xs text-gray-400 self-start">
-                            {chirp.isLike?"❤️":"🤍"} <span className='text-sm'>{likes}</span>
-                        </button>
-                    </p>
+                        {(chirp.isLike===null||chirp.isLike===undefined)?null
+                            :<button onClick={(e) => {
+                            e.stopPropagation()
+                            onToggleLike()
+                        }} className="tex-xs text-gray-400 self-start hover:scale-105 transition">
+                            {chirp.isLike ? "❤️" : "🤍"} <span className='text-sm'>{likes}</span>
+                        </button>}
+                    </Link>
                 }
             </div>
 
