@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import {Head, Link, usePage} from "@inertiajs/react";
+import {Head, usePage} from "@inertiajs/react";
 import Chirp from "@/Components/Chirp.jsx";
 import ReplyForm from "@/Pages/Chirps/Partials/ReplyForm.jsx";
 
