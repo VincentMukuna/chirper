@@ -13,7 +13,13 @@ dayjs.extend(relativeTime);
 export default function UserProfile({auth, user, userFollows}){
     const [selectedTab, setSelectedTab] = useState(0);
     const onToggleFollow=()=>{
-        router.post(route('user.toggle-follow', {user:user.id}))
+        router.post(
+            route('user.toggle-follow', {user:user.id}),
+            {},
+            {
+                preserveScroll:true,
+                preserveState:true,
+            })
     }
 
     return(
