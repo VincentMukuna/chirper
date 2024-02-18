@@ -48,12 +48,24 @@ class User extends Authenticatable
 
     public function chirps(): HasMany
     {
-        return $this->hasMany(Chirp::class);
+        return $this->hasMany(Chirp::class)->latest();
+    }
+
+    public function replies()
+    {
+        return $this->chirps()->whereNotNull('replying_to');
+
+    }
+
+    public function likedChirps():hasMany
+    {
+        return $this->hasMany(ChirpLikes::class )->latest();
     }
 
     public function followers():BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id')
+            ->withTimestamps();
     }
 
     public function following():BelongsToMany
