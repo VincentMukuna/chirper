@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Events\ChirpCreated;
 use App\Events\ChirpLiked;
+use App\Events\ChirpRepliedTo;
 use App\Listeners\SendChirpCreatedNotifications;
 use App\Listeners\SendChirpLikedNotification;
+use App\Listeners\SendChirpRepliedToNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -27,7 +29,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         ChirpLiked::class=>[
             SendChirpLikedNotification::class,
-        ]
+        ],
+        ChirpRepliedTo::class=>[
+            SendChirpRepliedToNotification::class,
+        ],
     ];
 
     /**

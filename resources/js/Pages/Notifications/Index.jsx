@@ -17,20 +17,33 @@ export default function Index({auth, notifications}){
                     'title':`${notification.data.chirp.user.name} created a new chirp.`,
                     'body':`${notification.data.chirp.message}`.substring(0,50)
                 }
+            case 'App\\Notifications\\ReplyChirp':
+                console.log(notification)
+                return {
+                    'icon': <div className='flex items-center'>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                            <path fill="#888888"
+                                  d="M10 9V7.41c0-.89-1.08-1.34-1.71-.71L3.7 11.29a.996.996 0 0 0 0 1.41l4.59 4.59c.63.63 1.71.19 1.71-.7V14.9c5 0 8.5 1.6 11 5.1c-1-5-4-10-11-11"/>
+                        </svg>
+                    </div>,
+                    'title': `${notification.data.replier.name} replied to your chirp: ${notification.data.originalChirp.message.substring(0, 50)}`,
+                    'body': `${notification.data.reply.message}`.substring(0, 50)
+                }
             default:
                 return null;
         }
     }
-    return(
+
+    return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Notifications" />
+            <Head title="Notifications"/>
             <div className="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
                 {notifications.length > 0
                     ?
 
-                    <div className="mt-6 bg-white shadow-sm rounded-lg divide-y">
+                    <div className="bg-white shadow-sm rounded-lg divide-y">
                         {notifications.map((notification) => (
-                            <Notification notification={notification} {...getNotificationProps(notification)}/>
+                            <Notification key={notification.id} notification={notification} {...getNotificationProps(notification)}/>
                         ))}
                     </div>
                     :
