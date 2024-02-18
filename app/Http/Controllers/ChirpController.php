@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ChirpCreated;
 use App\Events\ChirpLiked;
+use App\Events\ChirpRepliedTo;
 use App\Models\Chirp;
+use App\Models\User;
 use App\Notifications\LikeChirp;
+use App\Notifications\ReplyChirp;
+use App\Rules\ChirpExists;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Response;
 use Inertia\Inertia;
 
@@ -17,7 +23,11 @@ class ChirpController extends Controller
      */
     public function index(): Response
     {
-        $chirps = Chirp::with('user:id,name')->latest()->withCount('likes')->get();
+        $chirps = Chirp::with('user:id,name')
+            ->latest()
+            ->whereNull('replying_to')
+            ->withCount('likes')
+            ->get();
 
         $userId = auth()->id();
         $chirps->map(function ($chirp) use ($userId) {
@@ -26,7 +36,10 @@ class ChirpController extends Controller
         });
 
         return Inertia::render('Chirps/Index',
-            ['chirps'=>$chirps]);
+            [
+                'chirps'=>$chirps,
+                'warning'=>['This is a warning']
+            ]);
     }
 
     /**
@@ -42,12 +55,21 @@ class ChirpController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'message' => 'required|string|max:255',
+            'replying_to'=>['nullable', new ChirpExists()]
         ]);
 
-        $request->user()->chirps()->create($validated);
-        return redirect(route('chirps.index'));
+        $chirp = new Chirp($validated);
+        $request->user()->chirps()->save($chirp);
+        if($validated['replying_to']){
+            $originalChirp = Chirp::find($validated['replying_to']);
+            ChirpRepliedTo::dispatch($originalChirp,$chirp,$request->user());
+        }else{
+            ChirpCreated::dispatch($chirp);
+        }
+        return back();
     }
 
     /**
@@ -55,7 +77,16 @@ class ChirpController extends Controller
      */
     public function show(Chirp $chirp)
     {
-        //
+       $chirp = Chirp::with(['user:id,name', 'replies', 'replies.user:id,name'])
+           ->withCount('likes')
+           ->findOrFail($chirp->id);
+
+       $chirp->isLike = $chirp->likes()->where('user_id', auth()->id())->exists();
+        return Inertia::render('Chirps/Show',
+        [
+            'chirp'=>$chirp
+        ]
+        );
     }
 
     /**

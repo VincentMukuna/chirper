@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\ChirpCreated;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,14 +16,11 @@ class Chirp extends Model
 
 
     protected $fillable = [
-        'message'
+        'message',
+        'replying_to'
     ];
 
     protected $hidden=[
-    ];
-
-    protected $dispatchesEvents = [
-        'created' => ChirpCreated::class,
     ];
 
     public function user():BelongsTo
@@ -32,7 +30,27 @@ class Chirp extends Model
 
     public function likes():BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'chirp_likes', 'chirp_id', 'user_id');
+        return $this
+            ->belongsToMany(User::class, 'chirp_likes', 'chirp_id', 'user_id')
+            ->withTimestamps();
     }
+
+    public function replies():HasMany
+    {
+        return $this->hasMany(Chirp::class, 'replying_to');
+
+    }
+
+    public function scopeReplies(Builder $query): Builder
+    {
+        return $query->whereNotNull('replying_to');
+    }
+
+    public function inReplyTo():BelongsTo
+    {
+        return $this->belongsTo(Chirp::class, 'replying_to');
+    }
+
+
 
 }

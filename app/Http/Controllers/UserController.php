@@ -12,8 +12,16 @@ class UserController extends Controller
     public function profile(User $user){
         return Inertia::render('Users/UserProfile', [
             'user'=> User::withCount('followers')
-                ->withCount('following')
-                ->with('followers')
+                ->withCount(['following', 'chirps'])
+                ->with(
+                    [
+                        'chirps',
+                        'likedChirps.chirp',
+                        'likedChirps.chirp.user',
+                        'chirps.user:id,name',
+                        'replies',
+                        'replies.user:id,name'
+                    ])
                 ->findOrFail($user->id),
             'userFollows'=> $user->isFollowedBy(auth()->id())
 
