@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('chirps', ChirpController::class)
-    ->only(['index', 'store', 'update', 'destroy', ''])
+    ->only(['index', 'store', 'update', 'destroy', 'show'])
     ->middleware(['auth', 'verified']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -61,7 +61,8 @@ Route::middleware(['auth', 'verified'])->group(function (){
 });
 
 Route::middleware(['auth', 'verified'])->group(function (){
-    Route::get('users/{user}/profile', [UserController::class, 'profile']);
+    Route::get('users/{user}/profile', [UserController::class, 'profile'])
+    ->name('user.profile');
 
     Route::post('users/{user}/follow', [UserController::class, 'follow'])
         ->name('user.follow');
