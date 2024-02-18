@@ -1,7 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import {Head, Link, usePage} from "@inertiajs/react";
-import dayjs from "dayjs";
-import Dropdown from "@/Components/Dropdown.jsx";
 import Chirp from "@/Components/Chirp.jsx";
 import ReplyForm from "@/Pages/Chirps/Partials/ReplyForm.jsx";
 
