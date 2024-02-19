@@ -29,21 +29,13 @@ class LikeChirp extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return ['database'];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-            ->subject($this->liker->name." liked your post : ".Str::limit($this->chirp->message, 20))
-            ->greeting("Like from ".$this->liker->name)
-            ->line(Str::limit($this->chirp->message, 50))
-            ->action('Go to Chirper', url('/'))
-            ->line('Thank you for using our application!');
-    }
+
 
     public function toDatabase(object $notifiable):array
     {
