@@ -18,15 +18,14 @@ export default function Chirp({chirp}) {
     const {data, setData, patch, clearErrors, reset, errors} = useForm({
         message: chirp.message,
     })
-    const onToggleLike=()=>{
-            router.patch(route(isLike?'chirps.unlike':'chirps.like', {chirp:chirp.id}),
-                {},
-                {
-                    preserveScroll:true,
-                    preserveState:true,
-                })
-            setLikes(prev=>isLike?prev-1:prev+1)
-            setIsLike(prev=>!prev)
+    const onToggleLike=()=>{router.patch(route(isLike?'chirps.unlike':'chirps.like', {chirp:chirp.id}),
+            {},
+            {
+                preserveScroll:true,
+                preserveState:true,
+            })
+        setLikes(prev=>isLike?prev-1:prev+1)
+        setIsLike(prev=>!prev)
     }
 
     const submit = (e) => {
