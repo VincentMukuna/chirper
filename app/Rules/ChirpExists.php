@@ -15,7 +15,7 @@ class ChirpExists implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if(!Chirp::find($value)->exists()){
+        if(Chirp::find($value)===null){
             $fail('The original chirp does not exist. It may have been deleted');
         }
     }
