@@ -27,7 +27,6 @@ class ChirpCreateTest extends TestCase
         $response
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('chirps.index'));
-
         $this->assertEquals('test', $user->refresh()->chirps()->first()->message);
     }
 

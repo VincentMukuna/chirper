@@ -15,21 +15,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         User::factory(10)
-             ->hasChirps(5)
+        User::factory(1)
+        ->hasChirps(1)
+        ->create([
+            'name'=>'Test User',
+            'password'=>Hash::make('password'),
+            'email'=>'test@gmail.com'
+        ]);
+        User::factory(1)
+        ->hasChirps(1)
+        ->create([
+            'name'=>'Test User2',
+            'password'=>Hash::make('password'),
+            'email'=>'test2@gmail.com'
+        ]);
+         User::factory(5)
+             ->hasChirps(2)
              ->create();
-          User::factory(1)
-             ->hasChirps(5)
-             ->create([
-                 'password'=>Hash::make('password'),
-                 'email'=>'test@gmail.com'
-             ]);
 
-
-//         Chirp::all()->map(function (Chirp $chirp){
-//             $chirp->replies()->createMany(Chirp::factory(5)
-//                 ->for(User::inRandomOrder()->first())
-//                 ->create());
-//         });
     }
 }
