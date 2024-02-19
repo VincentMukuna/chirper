@@ -23,10 +23,10 @@ class ChirpController extends Controller
      */
     public function index(): Response
     {
-        $chirps = Chirp::with('user:id,name')
-            ->latest()
-            ->whereNull('replying_to')
+        $chirps = Chirp::isReply(false)
+            ->with('user:id,name')
             ->withCount('likes')
+            ->latest()
             ->get();
 
         $userId = auth()->id();
@@ -63,7 +63,7 @@ class ChirpController extends Controller
 
         $chirp = new Chirp($validated);
         $request->user()->chirps()->save($chirp);
-        if($validated['replying_to']){
+        if($request->has('replying_to')){
             $originalChirp = Chirp::find($validated['replying_to']);
             ChirpRepliedTo::dispatch($originalChirp,$chirp,$request->user());
         }else{
@@ -129,10 +129,13 @@ class ChirpController extends Controller
     {
         $chirp->likes()->attach(auth()->id());
         ChirpLiked::dispatch($chirp, auth()->user());
+        return back();
     }
 
     public function dislike(Chirp $chirp)
     {
         $chirp->likes()->detach(auth()->id());
+        return back();
+
     }
 }
