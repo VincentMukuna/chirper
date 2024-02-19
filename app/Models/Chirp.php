@@ -41,16 +41,18 @@ class Chirp extends Model
 
     }
 
-    public function scopeReplies(Builder $query): Builder
+    public function scopeIsReply(Builder $query, $reply=true): Builder
     {
-        return $query->whereNotNull('replying_to');
+        if($reply){
+            return $query->whereNotNull('replying_to');
+        }else{
+            return $query->whereNull('replying_to');
+        }
+
     }
 
     public function inReplyTo():BelongsTo
     {
         return $this->belongsTo(Chirp::class, 'replying_to');
     }
-
-
-
 }
