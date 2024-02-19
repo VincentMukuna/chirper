@@ -19,42 +19,14 @@ export default function Chirp({chirp}) {
         message: chirp.message,
     })
     const onToggleLike=()=>{
-        setIsLike(prev=>!prev);
-        if(chirp.isLike){
-
-            setLikes(prev=>prev-1)
-            router.patch(
-                route('chirps.dislike', {chirp:chirp.id}),
-                {}
-                ,
-                {
-                    onError:(e)=>{
-                        chirp.isLike = false;
-                        console.log('Error: ', e)
-                        setLikes(prev=>prev+1)
-                        setIsLike(prev=>!prev);
-                    },
-                    preserveScroll:true,
-                    preserveState:true,
-                })
-        }else{
-            chirp.isLike = true;
-            setLikes(prev=>prev+1)
-            router.patch(
-                route('chirps.like', {chirp:chirp.id}),
+            router.patch(route(isLike?'chirps.unlike':'chirps.like', {chirp:chirp.id}),
                 {},
                 {
-                    onError:(e)=>{
-                        chirp.isLike = false;
-                        console.log('Error: ', e)
-                        setLikes(prev=>prev-1)
-                        setIsLike(prev=>!prev);
-                    },
                     preserveScroll:true,
                     preserveState:true,
                 })
-        }
-
+            setLikes(prev=>isLike?prev-1:prev+1)
+            setIsLike(prev=>!prev)
     }
 
     const submit = (e) => {
