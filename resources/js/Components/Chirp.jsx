@@ -11,19 +11,17 @@ dayjs.extend(relativeTime);
 export default function Chirp({chirp}) {
     const {auth} = usePage().props;
 
-
-
+    const [isLike, setIsLike] = useState(chirp.isLike);
     const [likes, setLikes] = useState(chirp.likes_count);
     const  [editing, setEditing] = useState(false);
 
     const {data, setData, patch, clearErrors, reset, errors} = useForm({
         message: chirp.message,
     })
-
-
     const onToggleLike=()=>{
+        setIsLike(prev=>!prev);
         if(chirp.isLike){
-            chirp.isLike = false;
+
             setLikes(prev=>prev-1)
             router.patch(
                 route('chirps.dislike', {chirp:chirp.id}),
@@ -34,8 +32,10 @@ export default function Chirp({chirp}) {
                         chirp.isLike = false;
                         console.log('Error: ', e)
                         setLikes(prev=>prev+1)
+                        setIsLike(prev=>!prev);
                     },
                     preserveScroll:true,
+                    preserveState:true,
                 })
         }else{
             chirp.isLike = true;
@@ -48,8 +48,10 @@ export default function Chirp({chirp}) {
                         chirp.isLike = false;
                         console.log('Error: ', e)
                         setLikes(prev=>prev-1)
+                        setIsLike(prev=>!prev);
                     },
                     preserveScroll:true,
+                    preserveState:true,
                 })
         }
 
@@ -130,13 +132,14 @@ export default function Chirp({chirp}) {
                     </form>
                     : <Link  href={route('chirps.show', [chirp.id])} className="mt-3 text-lg test-gray-900 flex flex-col gap-1">
                         {chirp.message}
-                        {(chirp.isLike===null||chirp.isLike===undefined)?null
+                        {(chirp.isLike===null||chirp.isLike===undefined)
+                            ?null
                             :<button onClick={(e) => {
-                            e.stopPropagation()
-                            onToggleLike()
-                        }} className="tex-xs text-gray-400 self-start hover:scale-105 transition">
-                            {chirp.isLike ? "❤️" : "🤍"} <span className='text-sm'>{likes}</span>
-                        </button>}
+                                e.preventDefault();
+                                onToggleLike()
+                            }} className="tex-xs text-gray-400 self-start hover:scale-105 transition">
+                                {isLike ? "❤️" : "🤍"} <span className='text-sm'>{likes}</span>
+                            </button>}
                     </Link>
                 }
             </div>
