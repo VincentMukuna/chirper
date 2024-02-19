@@ -32,7 +32,6 @@ class RechirpController extends Controller
 
         $rechirp->save();
 
-        dd($chirp->rechirps());
 
         ChirpRechirped::dispatch($chirp,$rechirp,$chirper,$rechirper);
         return back();
