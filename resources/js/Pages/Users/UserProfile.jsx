@@ -34,7 +34,7 @@ export default function UserProfile({auth, user, userFollows}){
                     </div>
                     <div className='grid '>
                         <span className='font-semibold text-lg'>{user.name}</span>
-                        <span className='italic '>{user.bio || "A bio"}</span>
+                        <span className=' '>{user.bio || "A bio"}</span>
 
                     </div>
 
