@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserFollowed;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -39,10 +40,13 @@ class UserController extends Controller
     public function follow( User $user){
 
         if ($user->is(auth()->user())){
-            dd("Can't follow yourself");
+           return back()->withErrors([
+               'follow'=>'Cannot follow yourself',
+           ]);
         }
 
         auth()->user()->following()->attach($user->id);
+        UserFollowed::dispatch($user, auth()->user());
         return back();
     }
 

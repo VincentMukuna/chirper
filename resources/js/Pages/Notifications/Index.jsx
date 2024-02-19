@@ -1,6 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import {Head} from "@inertiajs/react";
 import Notification from "@/Components/Notification.jsx";
+import {IconUserFollows} from "@/Components/Icons.jsx";
 
 export default function Index({auth, notifications}){
     function getNotificationProps(notification){
@@ -11,9 +12,15 @@ export default function Index({auth, notifications}){
                     'title':`${notification.data.liker.name} liked your post.`,
                     'body':`${notification.data.chirp.message}`.substring(0,50)
                 }
+            case 'App\\Notifications\\NewFollower':
+            return {
+                'icon':<IconUserFollows />,
+                'title':`${notification.data.follower.name} followed you.`,
+                'body':'They will be notified of your new chirps'
+            }
             case 'App\\Notifications\\NewChirp':
                 return {
-                    'icon':'🐦 ',
+                    'icon':'🐦',
                     'title':`${notification.data.chirp.user.name} created a new chirp.`,
                     'body':`${notification.data.chirp.message}`.substring(0,50)
                 }

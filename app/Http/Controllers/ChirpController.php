@@ -23,7 +23,8 @@ class ChirpController extends Controller
      */
     public function index(): Response
     {
-        $chirps = Chirp::isReply(false)
+        $chirps = Chirp
+            ::isReply(false)
             ->with('user:id,name')
             ->withCount('likes')
             ->latest()
@@ -63,7 +64,7 @@ class ChirpController extends Controller
 
         $chirp = new Chirp($validated);
         $request->user()->chirps()->save($chirp);
-        if($request->has('replying_to')){
+        if($request->filled('replying_to')){
             $originalChirp = Chirp::find($validated['replying_to']);
             ChirpRepliedTo::dispatch($originalChirp,$chirp,$request->user());
         }else{

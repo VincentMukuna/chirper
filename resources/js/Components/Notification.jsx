@@ -7,7 +7,7 @@ dayjs.extend(relativeTime);
 
 function Notification({notification, icon='🔔', title='New notification', body = 'Hey, there sth big happened'}){
     return(
-        <div className={cn("flex  p-6 gap-3 ",
+        <div className={cn("flex p-6 gap-3 ",
             {
                 "bg-gray-50": notification.read_at === null
             }
@@ -15,13 +15,13 @@ function Notification({notification, icon='🔔', title='New notification', body
             <div className="flex-shrink-0 text-lg">
                 {icon}
             </div>
-            <div className='ms-4 flex flex-col gap-2 w-full'>
+            <div className='flex flex-col gap-2 w-full'>
                 <div className="flex justify-between ">
-                    <div className="flex  gap-2 ">
+                    <div className="flex  gap-3 items-baseline ">
                         <div className="text-sm font-medium text-gray-900">
                             {title}
                         </div>
-                        <div className="text-sm text-gray-400">
+                        <div className="text-xs text-gray-400">
                             {dayjs(notification.created_at).fromNow()}
                         </div>
                     </div>
