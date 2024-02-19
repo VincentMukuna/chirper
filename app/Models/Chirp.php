@@ -41,6 +41,14 @@ class Chirp extends Model
 
     }
 
+    public function rechirps():HasMany
+    {
+        return $this->hasMany(Chirp::class, 'rechirping');
+
+    }
+
+
+
     public function scopeIsReply(Builder $query, $reply=true): Builder
     {
         if($reply){

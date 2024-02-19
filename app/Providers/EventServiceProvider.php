@@ -4,12 +4,15 @@ namespace App\Providers;
 
 use App\Events\ChirpCreated;
 use App\Events\ChirpLiked;
+use App\Events\ChirpRechirped;
 use App\Events\ChirpRepliedTo;
 use App\Events\UserFollowed;
 use App\Listeners\SendChirpCreatedNotifications;
 use App\Listeners\SendChirpLikedNotification;
 use App\Listeners\SendChirpRepliedToNotification;
 use App\Listeners\SendNewFollowerNotification;
+use App\Listeners\SendRechirpNotification;
+use App\Notifications\RechirpChirp;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -37,6 +40,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         UserFollowed::class=>[
             SendNewFollowerNotification::class,
+        ],
+        ChirpRechirped::class=>[
+            SendRechirpNotification::class
         ]
     ];
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\ChirpCreated;
 use App\Events\ChirpLiked;
+use App\Events\ChirpRechirped;
 use App\Events\ChirpRepliedTo;
 use App\Models\Chirp;
 use App\Models\User;
@@ -138,5 +139,32 @@ class ChirpController extends Controller
         $chirp->likes()->detach(auth()->id());
         return back();
 
+    }
+
+    public function rechirp( Request $request, Chirp $chirp)
+    {
+        $chirper = $chirp->user;
+        $rechirper = auth()->user();
+
+
+
+       if(auth()->user()->chirps()->where('rechirping', $chirp->id)->exists()){
+           return back()->withErrors([
+               'rechirping'=>'You have already rechirped this chirp'
+           ]);
+       }
+       $rechirp = new Chirp([
+           'message'=>$chirp->message,
+       ]);
+
+       $rechirp->forceFill([
+           'user_id' => $rechirper->id,
+           'rechirping'=>$chirp->id,
+       ]);
+
+       $rechirp->save();
+
+       ChirpRechirped::dispatch($chirp,$rechirp,$chirper,$rechirper);
+       return back();
     }
 }

@@ -45,6 +45,8 @@ Route::resource('chirps', ChirpController::class)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('chirps/{chirp}/like', [ChirpController::class, 'like'])->name('chirps.like');
     Route::patch('chirps/{chirp}/dislike', [ChirpController::class, 'dislike'])->name('chirps.unlike');
+    Route::post('chirps/{chirp}/rechirp', [ChirpController::class, 'rechirp'])->name('chirps.rechirp');
+
 });
 
 Route::middleware(['auth', 'verified'])->group(function (){
