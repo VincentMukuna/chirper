@@ -1,21 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Chirp;
 
 use App\Events\ChirpCreated;
-use App\Events\ChirpLiked;
-use App\Events\ChirpRechirped;
 use App\Events\ChirpRepliedTo;
+use App\Http\Controllers\Controller;
 use App\Models\Chirp;
-use App\Models\User;
-use App\Notifications\LikeChirp;
-use App\Notifications\ReplyChirp;
 use App\Rules\ChirpExists;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Inertia\Response;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ChirpController extends Controller
 {
@@ -26,14 +21,16 @@ class ChirpController extends Controller
     {
         $chirps = Chirp
             ::isReply(false)
-            ->with('user:id,name')
-            ->withCount('likes')
+            ->with(['user:id,name', 'originalChirp','originalChirp.user:id,name'])
+            ->withCount(['likes', 'rechirps'])
             ->latest()
             ->get();
 
-        $userId = auth()->id();
-        $chirps->map(function ($chirp) use ($userId) {
-            $chirp->isLike = $chirp->likes()->where('user_id', $userId)->exists();
+
+        $user= auth()->user();
+        $chirps->map(function (Chirp $chirp) use ($user) {
+            $chirp->isLike = $user->likedChirps()->where('chirp_id', $chirp->id)->exists();
+            $chirp->isRechirp = $chirp->rechirps()->where('user_id', $user->id)->exists();
             return $chirp;
         });
 
@@ -79,7 +76,7 @@ class ChirpController extends Controller
      */
     public function show(Chirp $chirp)
     {
-       $chirp = Chirp::with(['user:id,name', 'replies', 'replies.user:id,name'])
+       $chirp = Chirp::with(['user:id,name', 'replies', 'replies.user:id,name',  'originalChirp','originalChirp.user:id,name'])
            ->withCount('likes')
            ->findOrFail($chirp->id);
 
@@ -125,46 +122,5 @@ class ChirpController extends Controller
         $chirp->delete();
 
         return redirect(route('chirps.index'));
-    }
-
-    public function like(Chirp $chirp)
-    {
-        $chirp->likes()->attach(auth()->id());
-        ChirpLiked::dispatch($chirp, auth()->user());
-        return back();
-    }
-
-    public function dislike(Chirp $chirp)
-    {
-        $chirp->likes()->detach(auth()->id());
-        return back();
-
-    }
-
-    public function rechirp( Request $request, Chirp $chirp)
-    {
-        $chirper = $chirp->user;
-        $rechirper = auth()->user();
-
-
-
-       if(auth()->user()->chirps()->where('rechirping', $chirp->id)->exists()){
-           return back()->withErrors([
-               'rechirping'=>'You have already rechirped this chirp'
-           ]);
-       }
-       $rechirp = new Chirp([
-           'message'=>$chirp->message,
-       ]);
-
-       $rechirp->forceFill([
-           'user_id' => $rechirper->id,
-           'rechirping'=>$chirp->id,
-       ]);
-
-       $rechirp->save();
-
-       ChirpRechirped::dispatch($chirp,$rechirp,$chirper,$rechirper);
-       return back();
     }
 }

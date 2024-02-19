@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\ChirpController;
+use App\Http\Controllers\Chirp\ChirpController;
+use App\Http\Controllers\Chirp\LikeController;
+use App\Http\Controllers\Chirp\RechirpController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -43,9 +45,10 @@ Route::resource('chirps', ChirpController::class)
     ->middleware(['auth', 'verified']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::patch('chirps/{chirp}/like', [ChirpController::class, 'like'])->name('chirps.like');
-    Route::patch('chirps/{chirp}/dislike', [ChirpController::class, 'dislike'])->name('chirps.unlike');
-    Route::post('chirps/{chirp}/rechirp', [ChirpController::class, 'rechirp'])->name('chirps.rechirp');
+    Route::patch('chirps/{chirp}/like', [LikeController::class, 'like'])->name('chirps.like');
+    Route::patch('chirps/{chirp}/unlike', [LikeController::class, 'dislike'])->name('chirps.unlike');
+    Route::post('chirps/{chirp}/rechirp', [RechirpController::class, 'rechirp'])->name('chirps.rechirp');
+    Route::post('chirps/{chirp}/undo-rechirp', [RechirpController::class, 'undo_rechirp'])->name('chirps.undo_rechirp');
 
 });
 

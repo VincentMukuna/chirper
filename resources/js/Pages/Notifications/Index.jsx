@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import {Head} from "@inertiajs/react";
 import Notification from "@/Components/Notification.jsx";
-import {IconUserFollows} from "@/Components/Icons.jsx";
+import {IconRechirp, IconUserFollows} from "@/Components/Icons.jsx";
 
 export default function Index({auth, notifications}){
     function getNotificationProps(notification){
@@ -35,6 +35,12 @@ export default function Index({auth, notifications}){
                     </div>,
                     'title': `${notification.data.replier.name} replied to your chirp: ${notification.data.originalChirp.message.substring(0, 50)}`,
                     'body': `${notification.data.reply.message}`.substring(0, 50)
+                }
+            case 'App\\Notifications\\RechirpChirp':
+                return {
+                    'icon':<IconRechirp />,
+                    'title':`${notification.data.rechirper.name} rechirped your chirp`,
+                    'body':`${notification.data.rechirp.message}`.substring(0,50)
                 }
             default:
                 return null;

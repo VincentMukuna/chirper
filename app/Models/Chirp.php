@@ -41,10 +41,17 @@ class Chirp extends Model
 
     }
 
+
+
     public function rechirps():HasMany
     {
         return $this->hasMany(Chirp::class, 'rechirping');
 
+    }
+
+    public function originalChirp():BelongsTo
+    {
+        return $this->belongsTo(Chirp::class, 'rechirping');
     }
 
 
