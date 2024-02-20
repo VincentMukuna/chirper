@@ -16,7 +16,8 @@ return new class extends Migration
 
             $table->foreign('replying_to')
                 ->references('id')
-                ->on('chirps')->cascadeOnDelete();
+                ->on('chirps')
+                ->noActionOnDelete();
         });
 
     }
