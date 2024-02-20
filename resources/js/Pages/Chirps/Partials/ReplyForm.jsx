@@ -9,7 +9,7 @@ export default function ReplyForm({chirp}){
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('chirps.store', {'replying_to':chirp.id}), {
+        post(route('chirps.reply', {'chirp':chirp.id}), {
             onSuccess: () => {
                 reset('message');
             }
