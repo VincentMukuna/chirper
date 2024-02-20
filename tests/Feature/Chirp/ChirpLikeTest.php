@@ -23,13 +23,21 @@ class ChirpLikeTest extends TestCase
         $chirp = Chirp::factory()->create([
             'user_id'=>$user->id,
         ]);
-        Event::fake();
+
+        Notification::fake();
+
         $response = $this->likeChirp($liker, $chirp);
+
+        Notification::assertSentTo(
+            $user,
+            LikeChirp::class,
+            function($notification, $channels) use($chirp, $liker){
+                return $notification->liker->id === $liker->id && $notification->chirp->id===$chirp->id;
+        });
 
         $response
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('chirps.index'));
-        Event::assertDispatched(ChirpLiked::class);
         $this->assertTrue($chirp->refresh()->likes()->count()===1);
     }
 
