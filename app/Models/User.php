@@ -51,6 +51,14 @@ class User extends Authenticatable
         return $this->hasMany(Chirp::class)->latest();
     }
 
+    public function posts():HasMany
+    {
+        return $this
+            ->hasMany(Chirp::class)
+            ->whereNull('replying_to')
+            ->latest();
+    }
+
     public function replies()
     {
         return $this->chirps()->whereNotNull('replying_to');
