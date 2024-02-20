@@ -37,8 +37,8 @@ class RechirpController extends Controller
         return back();
     }
 
-    public function undo_rechirp(Request $request, Chirp $rechirp)
+    public function undo_rechirp(Request $request, Chirp $chirp)
     {
-        $rechirp->delete();
+        $chirp->rechirps()->where('user_id', auth()->id())->delete();
     }
 }
