@@ -5,7 +5,8 @@ import {Link, useForm, usePage,router} from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown.jsx";
 import InputError from "@/Components/InputError.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
-import {IconChirp, IconRechirp, IconReply} from "@/Components/Icons.jsx";
+import IconChatBubble, {IconChirp, IconRechirp, IconReply} from "@/Components/Icons.jsx";
+import {cn} from "@/lib/utils.js";
 
 dayjs.extend(relativeTime);
 
@@ -63,7 +64,7 @@ export default function Chirp({chirp}) {
         });
     }
     return (
-        <div className="p-6 flex space-x-4 hover:bg-gray-50 cursor-pointer transition-all">
+        <div className="p-6 flex space-x-4 hover:bg-gray-50 transition-all">
             {chirp.replying_to!==null
                 ? <Link href={route('chirps.show', {chirp: chirp.replying_to})}>
                     <IconReply />
@@ -99,6 +100,7 @@ export default function Chirp({chirp}) {
 
                         <small className="ml-2 text-xs text-gray-500">{dayjs(chirp.created_at).fromNow()}</small>
                         {chirp.rechirping?<Link href={route('chirps.show', {chirp:chirp.rechirping})} className="ml-2 text-xs text-blue-800 hover:underline">see rechirped chirp</Link>:null}
+                        {chirp.in_reply_to?<Link href={route('chirps.show', {chirp:chirp.replying_to})} className="ml-2 text-xs text-blue-800 hover:underline">{`replying to ${chirp.in_reply_to.user.name}`}</Link>:null}
                         {chirp.created_at !== chirp.updated_at &&
                             <small className="text-xs text-gray-700">&middot; edited</small>}
                     </div>
@@ -142,35 +144,47 @@ export default function Chirp({chirp}) {
                             </button>
                         </div>
                     </form>
-                    : <Link  href={route('chirps.show', [chirp.id])} className="mt-3 text-lg test-gray-900 flex flex-col gap-1">
-                        {chirp.message}
+                    :
+                    <>
+                        <Link href={route('chirps.show', [chirp.id])}
+                              className="mt-3 text-lg test-gray-900 flex flex-col gap-2">
+                            {chirp.message}
 
-                        {chirp.rechirping?null:<div className={'flex gap-8 items-center'}>
-                            {(chirp.isLike === null || chirp.isLike === undefined)
-                                ? null
-                                : <button onClick={(e) => {
-                                    e.preventDefault();
-                                    onToggleLike()
-                                }} className="tex-xs text-gray-400 hover:scale-105 transition">
-                                    {isLike ? "❤️" : "🤍"} <span className='text-sm'>{likes}</span>
-                                </button>}
-                            {(chirp.isRechirp === null || chirp.isRechirp === undefined)
-                                ? null
-                                : <button onClick={(e) => {
-                                    e.preventDefault();
-                                    onToggleRechirp()
-                                }} className="tex-xs text-gray-400  hover:scale-105 transition flex gap-2">
-                                    <IconRechirp className={`${isRechirped ? 'text-indigo-800' : ''} `}/> <span
-                                    className='text-sm'>{rechirps}</span>
-                                </button>}
-                        </div>}
+                        </Link>
+                        <div className={'flex gap-8 items-center mt-4'}>
+                            <Link
+                                href={route('chirps.show', [chirp.id])}
+                                className="tex-xs text-gray-400  hover:scale-105 transition flex gap-2 items-center"
+                            >
+                                <IconChatBubble className={`w-6 h-6 `}/> <span
+                                className='text-sm'>{chirp.replies_count}</span>
+                            </Link>
 
-                    </Link>
+                            {chirp.rechirping ? null : <>
+                                {(chirp.isLike === null || chirp.isLike === undefined)
+                                    ? null
+                                    : <button onClick={(e) => {
+                                        e.preventDefault();
+                                        onToggleLike()
+                                    }} className="tex-xs text-gray-400 hover:scale-105 transition">
+                                        {isLike ? "❤️" : "🤍"} <span className='text-sm'>{likes}</span>
+                                    </button>}
+                                {(chirp.isRechirp === null || chirp.isRechirp === undefined)
+                                    ? null
+                                    : <button onClick={(e) => {
+                                        e.preventDefault();
+                                        onToggleRechirp()
+                                    }} className="tex-xs text-gray-400  hover:scale-105 transition flex gap-2">
+                                        <IconRechirp className={`${isRechirped ? 'fill-green-600' : 'fill-gray-500'} `}/> <span
+                                        className={cn('text-sm', {
+                                            'text-green-500':isRechirped
+                                        })}>{rechirps}</span>
+                                    </button>}
+                            </>}
+                        </div>
+                    </>
                 }
             </div>
-
-
-
         </div>
     )
 }
