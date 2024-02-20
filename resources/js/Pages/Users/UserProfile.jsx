@@ -70,7 +70,7 @@ export default function UserProfile({auth, user, userFollows}){
                         <Tab.Panels>
                             <Tab.Panel tabIndex={1}>
                                 <div className='divide-y'>
-                                    {user.chirps.map(chirp => (
+                                    {user.posts.map(chirp => (
                                         <Chirp chirp={chirp} key={chirp.id} />
                                     ))}
                                 </div>
