@@ -3,6 +3,7 @@
 use App\Http\Controllers\Chirp\ChirpController;
 use App\Http\Controllers\Chirp\LikeController;
 use App\Http\Controllers\Chirp\RechirpController;
+use App\Http\Controllers\Chirp\ReplyController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -43,6 +44,10 @@ Route::middleware('auth')->group(function () {
 Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy', 'show'])
     ->middleware(['auth', 'verified']);
+
+Route::middleware(['auth', 'verified'])->group(function (){
+    Route::post('chirps/{chirp}/reply', [ReplyController::class, 'store'])->name('chirps.reply');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('chirps/{chirp}/like', [LikeController::class, 'like'])->name('chirps.like');
