@@ -19,8 +19,6 @@ class RechirpChirp extends Notification
     public function __construct(
         public Chirp $chirp,
         public Chirp $rechirp,
-        public User $chirper,
-        public User $rechirper
     )
     {}
 
@@ -40,9 +38,9 @@ class RechirpChirp extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Rechirp from {$this->rechirper->name}")
+            ->subject("Rechirp from {$this->rechirp->user->name}")
             ->greeting(
-                "{$this->rechirper->name} has rechirped your chirp")
+                "{$this->rechirp->user->name} has rechirped your chirp")
             ->line(Str::limit($this->chirp->message, 50))
             ->action('Go to chirp', url(route('chirps.show', ['chirp'=>$this->chirp->id])))
             ->line('Thank you for using our application!');
@@ -53,14 +51,14 @@ class RechirpChirp extends Notification
 
         return [
             'rechirp'=>$this->rechirp,
-            'rechirper'=>$this->rechirper
+            'rechirper'=>$this->rechirp->user
         ];
     }
 
     public function shouldSend(object $notifiable):bool
     {
-        return $notifiable->id===$this->chirper->id&&
-            $notifiable->id!==$this->rechirper->id;
+        return $notifiable->id===$this->chirp->user->id&&
+            $notifiable->id!==$this->rechirp->user->id;
     }
 
 

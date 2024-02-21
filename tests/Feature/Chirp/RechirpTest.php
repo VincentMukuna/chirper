@@ -22,17 +22,11 @@ class RechirpTest extends TestCase
 
         $rechirper = User::factory()->create();
 
-        Notification::fake();
-
         $response = $this->rechirp($rechirper, $chirp);
 
         $response
             ->assertSessionHasNoErrors()
             ->assertRedirectToRoute('chirps.index');
-
-        Notification::assertSentTo($chirper, RechirpChirp::class);
-        Notification::assertCount(1);
-
 
         $this->assertDatabaseHas('chirps', [
             'rechirping'=>$chirp->id,
@@ -64,6 +58,31 @@ class RechirpTest extends TestCase
         $this->assertTrue($chirp->refresh()->rechirps()->count()===1);
 
     }
+
+    public function test_notification_sent_to_chirper_after_rechirp(){
+        $chirper = User::factory()->create();
+        $chirp=Chirp::factory()->create([
+            'user_id'=>$chirper->id,
+        ]);
+
+        $rechirper = User::factory()->create();
+        Notification::fake();
+
+        $response = $this->rechirp($rechirper, $chirp);
+
+
+        Notification::assertSentTo(
+            $chirper,
+            RechirpChirp::class,
+            function ($notification)use ($rechirper){
+                $this->assertObjectHasProperty('chirp', $notification);
+                $this->assertEquals($rechirper->id, $notification->rechirp->user->id);
+                return true;
+            }
+        );
+        Notification::assertCount(1);
+    }
+
 
     public function test_user_doesnt_receive_notification_if_rechirp_own_chirp():void
     {

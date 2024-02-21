@@ -22,12 +22,7 @@ class ChirpReplyTest extends TestCase
                 'user_id'=>$chirper->id
             ]);
         Notification::fake();
-        $response = $this
-            ->actingAs($replier)
-            ->from(route('chirps.show', ['chirp'=>$chirp->id]))
-            ->post(route('chirps.reply',['chirp'=>$chirp->id]),[
-                'message'=>'reply',
-            ]);
+        $response = $this->postReply($replier, route('chirps.show', ['chirp'=>$chirp->id]), $chirp->id);
 
         Notification::assertSentTo($chirper, ReplyChirp::class);
 
@@ -48,12 +43,7 @@ class ChirpReplyTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this
-            ->actingAs($user)
-            ->from(route('chirps.index'))
-            ->post(route('chirps.reply', ['chirp'=>'non_existent']),[
-                'message'=>'reply',
-            ]);
+        $response = $this->postReply($user, route('chirps.index'));
 
         $response
             ->assertNotFound();
@@ -85,7 +75,54 @@ class ChirpReplyTest extends TestCase
             ->delete(route('chirps.destroy',['chirp'=>$chirp->id]));
 
         $this->assertDatabaseCount('chirps', 1);
+    }
 
+    public function test_notification_has_correct_data()
+    {
+        $chirper = User::factory()->create();
+        $replier = User::factory()->create();
+
+        $chirp = Chirp::factory()->create([
+            'user_id'=>$chirper->id
+        ]);
+        Notification::fake();
+        $this->postReply($replier,route('chirps.show', [$chirp->id]), $chirp->id);
+
+        Notification::assertSentTo(
+            $chirper,
+            ReplyChirp::class,
+            function ($notification)use ($replier, $chirp){
+                $this->assertObjectHasProperty('reply', $notification);
+                $this->assertEquals($replier->id, $notification->reply->user->id);
+                return true;
+            }
+        );
+
+    }
+
+    public function test_user_doesnt_receive_notification_of_own_reply()
+    {
+        $user = User::factory()->create();
+        $chirp = Chirp::factory()->create([
+            'user_id'=>$user->id
+        ]);
+
+        Notification::fake();
+        $this->postReply($user, route('chirps.show', [$chirp->id]), $chirp->id);
+
+        Notification::assertNothingSent();
+
+
+    }
+
+    private function postReply(User $user,string $from,$id='non_existent')
+    {
+        return $this
+            ->actingAs($user)
+            ->from($from)
+            ->post(route('chirps.reply', ['chirp'=>$id]),[
+                'message'=>'reply',
+            ]);
 
     }
 }

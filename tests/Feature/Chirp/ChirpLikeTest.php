@@ -84,6 +84,27 @@ class ChirpLikeTest extends TestCase
 
        Notification::fake();
         $response = $this->likeChirp($liker, $chirp);
-       Notification::assertSentTo($user, LikeChirp::class);
+       Notification::assertSentTo(
+           $user,
+           LikeChirp::class,
+           function ($notification)use ($liker){
+               $this->assertObjectHasProperty('chirp', $notification);
+               $this->assertEquals($liker->id, $notification->liker->id);
+               return true;
+           }
+       );
+    }
+
+    public function test_chirper_doesnt_receive_notification_for_own_like(){
+        $user = User::factory()->create();
+
+        $chirp = Chirp::factory()->create([
+            'user_id'=>$user->id,
+        ]);
+
+        Notification::fake();
+        $response = $this->likeChirp($user, $chirp);
+        Notification::assertNothingSent();
+
     }
 }
