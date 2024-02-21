@@ -18,7 +18,7 @@ function Notification({notification, icon='🔔', title='New notification', body
             <div className='flex flex-col gap-2 w-full'>
                 <div className="flex justify-between ">
                     <div className="flex  gap-3 items-baseline ">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-gray-900 line-clamp-1">
                             {title}
                         </div>
                         <div className="text-xs text-gray-400">
