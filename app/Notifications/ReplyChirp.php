@@ -38,7 +38,7 @@ class ReplyChirp extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject($this->reply->user." replied to your chirp : ".Str::limit($this->originalChirp->message, 20))
+            ->subject($this->reply->user." replied to your chirp : ".Str::limit($this->reply->inReplyTo()->first()->message, 20))
             ->greeting("Reply from ".$this->reply->user->name)
             ->line(Str::limit($this->reply->message, 50))
             ->action('Go to Chirp', url(route('chirps.show',[
