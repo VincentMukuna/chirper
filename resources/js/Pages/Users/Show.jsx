@@ -7,6 +7,7 @@ import {useState} from "react";
 import {cn} from "@/lib/utils.js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import SecondaryButton from "@/Components/SecondaryButton.jsx";
 
 dayjs.extend(relativeTime);
 
@@ -46,24 +47,31 @@ export default function Show({auth, user, userFollows}){
 
                     <div className='flex justify-between items-center'>
                         <div className='flex gap-4'>
-                            <span className='font-semibold text-lg'>{`${user.following_count} following`}</span>
-                            <span className='font-semibold text-lg'>{`${user.followers_count} followers`}</span>
+                            <button aria-label={'show following'} className='font-semibold text-lg hover:underline'>{`${user.following_count} following`}</button>
+                            <button aria-label={'show followers'} className='font-semibold text-lg hover:underline'>{`${user.followers_count} followers`}</button>
 
                         </div>
 
                         <div className=''>
                             {user.id === auth.user.id
-                                ? null :
-                                <PrimaryButton
-                                    className={cn('', {
-                                            'bg-transparent border-2 border-gray-600 text-gray-800 hover:text-white':userFollows,
-                                            '':!userFollows
-                                        }
-                                    )}
-                                    onClick={() => onToggleFollow()}
-                                >
-                                    {userFollows ? "Following" : "Follow"}
-                                </PrimaryButton>
+                                ? <SecondaryButton onClick={()=>router.get(route('profile.edit'))}>
+                                    Edit Profile
+                                </SecondaryButton>
+                                :
+                                userFollows
+                                    ?
+                                    <SecondaryButton
+                                        onClick={() => onToggleFollow()}
+                                    >
+                                        Unfollow
+                                    </SecondaryButton>
+                                    :
+                                    <PrimaryButton
+                                        onClick={() => onToggleFollow()}
+
+                                    >
+                                        Follow
+                                    </PrimaryButton>
                             }
                         </div>
                     </div>
