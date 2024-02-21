@@ -52,8 +52,8 @@ class RechirpChirp extends Notification
     {
 
         return [
-            '$rechirp'=>$this->rechirp,
-            '$rechirper'=>$this->rechirper
+            'rechirp'=>$this->rechirp,
+            'rechirper'=>$this->rechirper
         ];
     }
 

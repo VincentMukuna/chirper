@@ -21,7 +21,7 @@ export default function Index({auth, notifications}){
             case 'App\\Notifications\\NewChirp':
                 return {
                     'icon':'🐦',
-                    'title':`${notification.data.chirp.user.name} created a new chirp.`,
+                    'title':`${notification.data.user.name} created a new chirp.`,
                     'body':`${notification.data.chirp.message}`.substring(0,50)
                 }
             case 'App\\Notifications\\ReplyChirp':

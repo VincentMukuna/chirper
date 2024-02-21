@@ -47,6 +47,7 @@ class NewChirp extends Notification
     {
         return [
             'chirp' => $this->chirp,
+            'user'=>$this->chirp->user
         ];
     }
 
