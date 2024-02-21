@@ -24,7 +24,7 @@ class FollowTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirectToRoute('user.show', ['user'=>$user->id]);
+            ->assertRedirectToRoute('users.show', ['user'=>$user->id]);
 
         Notification::assertSentTo($user, NewFollower::class);
         $this->assertEquals(1, $user->refresh()->followers()->count());
@@ -35,8 +35,8 @@ class FollowTest extends TestCase
     {
         return $this
             ->actingAs($follower)
-            ->fromRoute('user.show', ['user'=>$user->id])
-            ->post(route('user.follow', ['user'=>$user->id]));
+            ->fromRoute('users.show', ['user'=>$user->id])
+            ->post(route('users.follow', ['user'=>$user->id]));
     }
 
     public function test_user_cannot_follow_themselves()
@@ -47,7 +47,7 @@ class FollowTest extends TestCase
 
         $response
             ->assertSessionHasErrors('follow')
-            ->assertRedirectToRoute('user.show', ['user'=>$user->id]);
+            ->assertRedirectToRoute('users.show', ['user'=>$user->id]);
 
         Notification::assertNothingSentTo($user);
 

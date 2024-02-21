@@ -76,16 +76,18 @@ Route::middleware(['auth', 'verified'])->group(function (){
 
 //Users
 Route::middleware(['auth', 'verified'])->group(function (){
+    Route::get('users', [UserController::class, 'index'])
+        ->name('users.index');
     Route::get('users/{user}', [UserController::class, 'show'])
-    ->name('user.show');
+    ->name('users.show');
 
     Route::post('users/{user}/follow', [FollowController::class, 'follow'])
-        ->name('user.follow');
+        ->name('users.follow');
 
     Route::post('users/{user}/unfollow', [FollowController::class, 'unfollow'])
-        ->name('user.unfollow');
+        ->name('users.unfollow');
 
     Route::post('users/{user}/toggle-follow', [FollowController::class, 'toggleFollow'])
-        ->name('user.toggle-follow');
+        ->name('users.toggle-follow');
 });
 require __DIR__.'/auth.php';

@@ -14,7 +14,7 @@ export default function Show({auth, user, userFollows}){
     const [selectedTab, setSelectedTab] = useState(0);
     const onToggleFollow=()=>{
         router.post(
-            route('user.toggle-follow', {user:user.id}),
+            route('users.toggle-follow', {user:user.id}),
             {},
             {
                 preserveScroll:true,
@@ -55,7 +55,15 @@ export default function Show({auth, user, userFollows}){
                             {user.id === auth.user.id
                                 ? null :
                                 <PrimaryButton
-                                    onClick={() => onToggleFollow()}>{userFollows ? "Unfollow" : "Follow"}</PrimaryButton>
+                                    className={cn('', {
+                                            'bg-transparent border-2 border-gray-600 text-gray-800 hover:text-white':userFollows,
+                                            '':!userFollows
+                                        }
+                                    )}
+                                    onClick={() => onToggleFollow()}
+                                >
+                                    {userFollows ? "Following" : "Follow"}
+                                </PrimaryButton>
                             }
                         </div>
                     </div>
