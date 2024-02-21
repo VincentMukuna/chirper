@@ -11,7 +11,7 @@ class LikeController extends Controller
     public function like(Chirp $chirp)
     {
         $chirp->likes()->attach(auth()->id());
-        ChirpLiked::dispatch($chirp, auth()->user());
+        event(new ChirpLiked($chirp, auth()->user()));
         return back();
     }
 
