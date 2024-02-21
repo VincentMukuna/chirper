@@ -11,6 +11,10 @@ const headerNavLinks = [
     {
         label:'Notifications',
         name:'notifications.index',
+    },
+    {
+        label:'Users',
+        name:'users.index',
     }
 
 ];

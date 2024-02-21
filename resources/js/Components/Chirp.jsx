@@ -17,7 +17,7 @@ export function Chirp({chirp, classname, children}) {
 
     return (
         <ChirpContext.Provider value={{chirp, editing, setEditing}}>
-            <div className={cn("p-6 flex space-x-4 hover:bg-gray-50 transition-all", classname)}>
+            <div className={cn("p-6 flex space-x-4 hover:bg-indigo-50 transition-all", classname)}>
                 {children}
             </div>
         </ChirpContext.Provider>
@@ -62,7 +62,7 @@ export function ChirpHeader() {
                         ?
                         <>
                             <Link
-                                href={route('user.show', {user: chirp.original_chirp.user.id})}
+                                href={route('users.show', {user: chirp.original_chirp.user.id})}
                                 className="text-gray-800 hover:underline"
                             >
                                 {chirp.original_chirp.user.name}
@@ -72,7 +72,7 @@ export function ChirpHeader() {
                         </>
                         : null}
                     <Link
-                        href={route('user.show', {user: chirp.user.id})}
+                        href={route('users.show', {user: chirp.user.id})}
                         className="text-gray-800 hover:underline"
                     >
                         {chirp.user.name}
