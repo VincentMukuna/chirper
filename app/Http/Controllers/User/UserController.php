@@ -2,17 +2,28 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Events\UserFollowed;
 use App\Http\Controllers\Controller;
-use App\Models\Chirp;
 use App\Models\User;
 use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    public function index(){
+    public function index(\Illuminate\Http\Request $request){
+        $validated = $request->validate([
+            'search'=>'nullable|string'
+        ]);
+
+
+
         $currentUser=auth()->user();
-        $users = User::get()
+        $users = User::query()
+            ->when($request->filled('search'), function ($query) use($validated){
+                $query->where('name', 'LIKE', "%{$validated['search']}%");
+                return $query;
+            })
+            ->limit(10)
+            ->whereNot("id", auth()->id())
+            ->get()
             ->map(function (User $user) use ($currentUser) {
                 $user->isFollow = $currentUser->following()->where('user_id', $user->id)->exists();
                 return $user;
@@ -20,6 +31,7 @@ class UserController extends Controller
         ;
         return Inertia::render('Users/Index', [
             'users'=>$users,
+            'search'=>$request->get('search', '')
         ]);
     }
     public function show(User $user){
