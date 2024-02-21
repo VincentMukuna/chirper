@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import {Head} from "@inertiajs/react";
 import Notification from "@/Components/Notification.jsx";
-import {IconRechirp, IconUserFollows} from "@/Components/Icons.jsx";
+import {IconRechirp, IconReply, IconUserFollows} from "@/Components/Icons.jsx";
 
 export default function Index({auth, notifications}){
     function getNotificationProps(notification){
@@ -28,12 +28,9 @@ export default function Index({auth, notifications}){
                 console.log(notification)
                 return {
                     'icon': <div className='flex items-center'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-                            <path fill="#888888"
-                                  d="M10 9V7.41c0-.89-1.08-1.34-1.71-.71L3.7 11.29a.996.996 0 0 0 0 1.41l4.59 4.59c.63.63 1.71.19 1.71-.7V14.9c5 0 8.5 1.6 11 5.1c-1-5-4-10-11-11"/>
-                        </svg>
+                        <IconReply />
                     </div>,
-                    'title': `${notification.data.replier.name} replied to your chirp: ${notification.data.originalChirp.message.substring(0, 50)}`,
+                    'title': `${notification.data.replier.name} replied to your chirp: ${notification.data.chirp.message.substring(0, 50)}`,
                     'body': `${notification.data.reply.message}`.substring(0, 50)
                 }
             case 'App\\Notifications\\RechirpChirp':
