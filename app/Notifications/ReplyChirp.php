@@ -17,7 +17,7 @@ class ReplyChirp extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Chirp $originalChirp, public Chirp $reply, public User $replier)
+    public function __construct(public Chirp $reply)
     {
         //
     }
@@ -38,11 +38,11 @@ class ReplyChirp extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject($this->replier->name." replied to your chirp : ".Str::limit($this->originalChirp->message, 20))
-            ->greeting("Reply from ".$this->replier->name)
+            ->subject($this->reply->user." replied to your chirp : ".Str::limit($this->originalChirp->message, 20))
+            ->greeting("Reply from ".$this->reply->user->name)
             ->line(Str::limit($this->reply->message, 50))
             ->action('Go to Chirp', url(route('chirps.show',[
-                'chirp'=>$this->originalChirp->id
+                'chirp'=>$this->reply->inReplyTo()->first()->id
             ])))
             ->line('Thank you for using our application!');
     }
@@ -50,8 +50,8 @@ class ReplyChirp extends Notification
     public function toDatabase(object $notifiable):array
     {
         return [
-            'replier'=>$this->replier,
-            'originalChirp'=>$this->originalChirp,
+            'replier'=>$this->reply->user,
+            'chirp'=>$this->reply->inReplyTo()->first(),
             'reply'=>$this->reply
         ];
 
@@ -59,7 +59,8 @@ class ReplyChirp extends Notification
 
     public function shouldSend(object $notifiable): bool
     {
-        return $notifiable->id !== $this->replier->id;
+        return $notifiable->id === $this->reply->inReplyTo()->first()->user->id &&
+            $notifiable->id !== $this->reply->user->id;
     }
 
     /**

@@ -30,7 +30,7 @@ class ReplyController extends Controller
 
        $reply->save();
 
-        event(new ChirpRepliedTo($chirp, $reply, auth()->user()));
+        event(new ChirpRepliedTo($reply));
 
         return back();
     }

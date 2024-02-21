@@ -19,7 +19,7 @@ class ChirpRepliedTo
     /**
      * Create a new event instance.
      */
-    public function __construct(public Chirp $originalChirp,public Chirp $reply, public User $replier)
+    public function __construct(public Chirp $reply,)
     {
         //
     }

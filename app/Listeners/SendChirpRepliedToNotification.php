@@ -24,7 +24,7 @@ class SendChirpRepliedToNotification
      */
     public function handle(ChirpRepliedTo $event): void
     {
-        $user = User::find($event->originalChirp->user_id);
-        $user->notify(new ReplyChirp($event->originalChirp,$event->reply, $event->replier));
+        $user = $event->reply->inReplyTo()->first()->user;
+        $user->notify(new ReplyChirp($event->reply));
     }
 }
