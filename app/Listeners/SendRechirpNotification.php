@@ -23,12 +23,10 @@ class SendRechirpNotification
     public function handle(ChirpRechirped $event): void
     {
         $event
-            ->chirper
+            ->chirp->user
             ->notify(new RechirpChirp(
                 $event->chirp,
                 $event->rechirp,
-                $event->chirper,
-                $event->rechirper
             ));
     }
 }

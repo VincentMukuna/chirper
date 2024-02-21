@@ -11,10 +11,7 @@ class RechirpController extends Controller
 {
     public function rechirp( Request $request, Chirp $chirp)
     {
-        $chirper = $chirp->user;
         $rechirper = auth()->user();
-
-
 
         if(auth()->user()->chirps()->where('rechirping', $chirp->id)->exists()){
             return back()->withErrors([
@@ -33,7 +30,7 @@ class RechirpController extends Controller
         $rechirp->save();
 
 
-        event(new ChirpRechirped($chirp,$rechirp,$chirper,$rechirper));
+        event(new ChirpRechirped($chirp,$rechirp));
         return back();
     }
 

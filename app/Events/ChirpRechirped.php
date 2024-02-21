@@ -21,9 +21,7 @@ class ChirpRechirped
      */
     public function __construct(
         public Chirp $chirp,
-        public Chirp $rechirp,
-        public User $chirper,
-        public User $rechirper)
+        public Chirp $rechirp,)
     {
         //
     }
