@@ -8,11 +8,19 @@ import {cn} from "@/lib/utils.js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import SecondaryButton from "@/Components/SecondaryButton.jsx";
+import Modal from "@/Components/Modal.jsx";
+import UserFollowRshipList from "@/Pages/Users/Partials/UserFollowRshipList.jsx";
 
 dayjs.extend(relativeTime);
 
 export default function Show({auth, user, userFollows}){
     const [selectedTab, setSelectedTab] = useState(0);
+    const [showingFollowRships, setShowingFollowRships]=useState(undefined);
+
+    function onCloseModal(){
+        setShowingFollowRships(undefined);
+    }
+
     const onToggleFollow=()=>{
         router.post(
             route('users.toggle-follow', {user:user.id}),
@@ -22,6 +30,8 @@ export default function Show({auth, user, userFollows}){
                 preserveState:true,
             })
     }
+
+
 
     return(
         <AuthenticatedLayout user={auth.user}>
@@ -47,9 +57,27 @@ export default function Show({auth, user, userFollows}){
 
                     <div className='flex justify-between items-center'>
                         <div className='flex gap-4'>
-                            <button aria-label={'show following'} className='font-semibold text-lg hover:underline'>{`${user.following_count} following`}</button>
-                            <button aria-label={'show followers'} className='font-semibold text-lg hover:underline'>{`${user.followers_count} followers`}</button>
-
+                            <button
+                                onClick={()=>{user.following_count>0&&setShowingFollowRships('following')}}
+                                aria-label={'show following'}
+                                className='font-semibold text-lg hover:underline'
+                            >
+                                {`${user.following_count} following`}
+                            </button>
+                            <button
+                                onClick={()=>{user.followers_count>0&&setShowingFollowRships('followers')}}
+                                aria-label={'show followers'}
+                                className='font-semibold text-lg hover:underline'
+                            >
+                                {`${user.followers_count} followers`}
+                            </button>
+                            <Modal maxWidth={'lg'} show={showingFollowRships!==undefined} onClose={onCloseModal}>
+                                <div className={'p-6'}>
+                                    {
+                                        <UserFollowRshipList user={user} list={showingFollowRships} />
+                                    }
+                                </div>
+                            </Modal>
                         </div>
 
                         <div className=''>

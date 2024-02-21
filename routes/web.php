@@ -79,12 +79,18 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('users', [UserController::class, 'index'])
         ->name('users.index');
     Route::get('users/{user}', [UserController::class, 'show'])
-    ->name('users.show');
+        ->name('users.show');
 
-    Route::post('users/{user}/follow', [FollowController::class, 'follow'])
+    Route::get('users/{user}/following', [FollowController::class, 'following'])
+        ->name('users.following');
+     Route::get('users/{user}/followers', [FollowController::class, 'followers'])
+        ->name('users.followers');
+
+
+    Route::post('users/{user}/follow', [FollowController::class, 'create'])
         ->name('users.follow');
 
-    Route::post('users/{user}/unfollow', [FollowController::class, 'unfollow'])
+    Route::post('users/{user}/unfollow', [FollowController::class, 'destroy'])
         ->name('users.unfollow');
 
     Route::post('users/{user}/toggle-follow', [FollowController::class, 'toggleFollow'])

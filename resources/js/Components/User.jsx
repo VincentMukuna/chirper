@@ -21,13 +21,13 @@ const useUser = ()=>useContext(UserContext);
 export function UserAvatar({className}){
     const {user} = useUser();
     return(
-        <div className={cn('bg-gray-600 rounded-full w-10 h-10', className)}>
+        <div className={cn('bg-gray-600 rounded-full w-10 h-10 shrink-0', className)}>
 
         </div>
     )
 }
 
-export function UserDetails({className}){
+export function UserDetails({className, showBio=true}){
     const {user} = useUser();
     return(
         <div className={cn('flex flex-col gap-1', className)}>
@@ -36,7 +36,7 @@ export function UserDetails({className}){
                 className={'font-semibold hover:underline'}
             >{user.name}
             </Link>
-            <span className={'line-clamp-1'}>{user.bio}</span>
+            {showBio&&<span className={'line-clamp-1'}>{user.bio}</span>}
         </div>
     )
 }
@@ -51,6 +51,7 @@ export function UserActions({className}){
             {
                 preserveScroll:true,
                 preserveState:true,
+
             })
     }
     return(

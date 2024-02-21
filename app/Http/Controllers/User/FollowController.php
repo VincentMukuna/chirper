@@ -9,15 +9,21 @@ use Illuminate\Http\Request;
 
 class FollowController extends Controller
 {
+    public function following(User $user){
+        return $user->following()->get();
+    }
+    public function followers(User $user){
+        return $user->followers()->get();
+    }
     public function toggleFollow(User $user){
 
         if ($user->isFollowedBy(auth()->id())){
-            return $this->unfollow($user);
+            return $this->destroy($user);
         }else{
-            return $this->follow($user);
+            return $this->create($user);
         }
     }
-    public function follow( User $user){
+    public function create(User $user){
 
         if ($user->is(auth()->user())){
             return back()->withErrors([
@@ -30,7 +36,7 @@ class FollowController extends Controller
         return back();
     }
 
-    public function unfollow(User $user){
+    public function destroy(User $user){
         if(!$user->isFollowedBy(auth()->id())){
             return back()->with('warning', "Not following $user->name");
         }
