@@ -2,7 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {Head, router} from "@inertiajs/react";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import {Tab} from "@headlessui/react";
-import Chirp from "@/Components/Chirp.jsx";
+import {Chirp, ChirpAvatar, ChirpBody, ChirpContent, ChirpHeader} from "@/Components/Chirp.jsx";
 import {useState} from "react";
 import {cn} from "@/lib/utils.js";
 import dayjs from "dayjs";
@@ -10,7 +10,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 
-export default function UserProfile({auth, user, userFollows}){
+export default function Show({auth, user, userFollows}){
     const [selectedTab, setSelectedTab] = useState(0);
     const onToggleFollow=()=>{
         router.post(
@@ -62,7 +62,7 @@ export default function UserProfile({auth, user, userFollows}){
 
 
                     <Tab.Group selectedIndex={selectedTab} onChange={(val)=>setSelectedTab(val)}  >
-                        <Tab.List className='flex gap-4 justify-around mt-6 '>
+                        <Tab.List className='flex gap-4 justify-around mt-6 border-y py-2 '>
                             <Tab  className={cn('p-1 border-b-2 border-transparent focus-visible:outline-none', {'border-indigo-800':selectedTab===0})}>Chirps</Tab>
                             <Tab className={cn('p-1 border-b-2 border-transparent focus-visible:outline-none', {'border-indigo-800':selectedTab===1})}>Replies</Tab>
                             <Tab className={cn('p-1 border-b-2 border-transparent focus-visible:outline-none', {'border-indigo-800':selectedTab===2})}>Likes</Tab>
@@ -71,34 +71,45 @@ export default function UserProfile({auth, user, userFollows}){
                             <Tab.Panel tabIndex={1}>
                                 <div className='divide-y'>
                                     {user.posts.map(chirp => (
-                                        <Chirp chirp={chirp} key={chirp.id} />
+                                        <Chirp chirp={chirp} key={chirp.id}>
+                                            <ChirpAvatar />
+                                            <ChirpContent>
+                                                <ChirpHeader />
+                                                <ChirpBody />
+                                            </ChirpContent>
+                                        </Chirp>
                                     ))}
                                 </div>
                             </Tab.Panel>
                             <Tab.Panel tabIndex={2}>
                                 <div className='divide-y'>
                                     {user.replies.map(chirp => (
-                                        <Chirp chirp={chirp} key={chirp.id}/>
+                                        <Chirp chirp={chirp} key={chirp.id}>
+                                            <ChirpAvatar />
+                                            <ChirpContent>
+                                                <ChirpHeader />
+                                                <ChirpBody />
+                                            </ChirpContent>
+                                        </Chirp>
                                     ))}
                                 </div>
                             </Tab.Panel>
                             <Tab.Panel tabIndex={3}>
                                 <div className='divide-y'>
-                                    {user.liked_chirps.map(liked_chirp=>(
-                                        <Chirp chirp={liked_chirp.chirp} key={liked_chirp.id} />
+                                    {user.liked_chirps.map(chirp=>(
+                                        <Chirp chirp={chirp.chirp} key={chirp.id} >
+                                            <ChirpAvatar />
+                                            <ChirpContent>
+                                                <ChirpHeader />
+                                                <ChirpBody />
+                                            </ChirpContent>
+                                        </Chirp>
                                     ))}
                                 </div>
                             </Tab.Panel>
                         </Tab.Panels>
                     </Tab.Group>
                 </div>
-                {/*<div>*/}
-                {/*    <pre>*/}
-                {/*        <code>*/}
-                {/*            {JSON.stringify(user, null, 2)}*/}
-                {/*        </code>*/}
-                {/*    </pre>*/}
-                {/*</div>*/}
             </div>
         </AuthenticatedLayout>
     )
