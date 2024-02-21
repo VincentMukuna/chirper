@@ -24,7 +24,7 @@ class FollowTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirectToRoute('user.profile', ['user'=>$user->id]);
+            ->assertRedirectToRoute('user.show', ['user'=>$user->id]);
 
         Notification::assertSentTo($user, NewFollower::class);
         $this->assertEquals(1, $user->refresh()->followers()->count());
@@ -35,7 +35,7 @@ class FollowTest extends TestCase
     {
         return $this
             ->actingAs($follower)
-            ->fromRoute('user.profile', ['user'=>$user->id])
+            ->fromRoute('user.show', ['user'=>$user->id])
             ->post(route('user.follow', ['user'=>$user->id]));
     }
 
@@ -47,7 +47,7 @@ class FollowTest extends TestCase
 
         $response
             ->assertSessionHasErrors('follow')
-            ->assertRedirectToRoute('user.profile', ['user'=>$user->id]);
+            ->assertRedirectToRoute('user.show', ['user'=>$user->id]);
 
         Notification::assertNothingSentTo($user);
 

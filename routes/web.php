@@ -6,7 +6,8 @@ use App\Http\Controllers\Chirp\RechirpController;
 use App\Http\Controllers\Chirp\ReplyController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\User\FollowController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -41,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+//Chirping
 Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy', 'show'])
     ->middleware(['auth', 'verified']);
@@ -49,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::post('chirps/{chirp}/reply', [ReplyController::class, 'store'])->name('chirps.reply');
 });
 
+//Chirp actions
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('chirps/{chirp}/like', [LikeController::class, 'like'])->name('chirps.like');
     Route::patch('chirps/{chirp}/unlike', [LikeController::class, 'dislike'])->name('chirps.unlike');
@@ -57,6 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 });
 
+//notifications
 Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('notifications', [NotificationsController::class, 'index'])
         ->name('notifications.index');
@@ -70,16 +74,18 @@ Route::middleware(['auth', 'verified'])->group(function (){
 
 });
 
+//Users
 Route::middleware(['auth', 'verified'])->group(function (){
-    Route::get('users/{user}/profile', [UserController::class, 'profile'])
-    ->name('user.profile');
+    Route::get('users/{user}', [UserController::class, 'show'])
+    ->name('user.show');
 
-    Route::post('users/{user}/follow', [UserController::class, 'follow'])
+    Route::post('users/{user}/follow', [FollowController::class, 'follow'])
         ->name('user.follow');
 
-    Route::post('users/{user}/unfollow', [UserController::class, 'unfollow'])
+    Route::post('users/{user}/unfollow', [FollowController::class, 'unfollow'])
         ->name('user.unfollow');
-    Route::post('users/{user}/toggle-follow', [UserController::class, 'toggleFollow'])
+
+    Route::post('users/{user}/toggle-follow', [FollowController::class, 'toggleFollow'])
         ->name('user.toggle-follow');
 });
 require __DIR__.'/auth.php';
