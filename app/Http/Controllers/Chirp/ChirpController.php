@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Chirp;
 use App\Events\ChirpCreated;
 use App\Events\ChirpRepliedTo;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChirpRequest;
 use App\Models\Chirp;
 use App\Rules\ChirpExists;
 use Illuminate\Http\RedirectResponse;
@@ -52,16 +53,11 @@ class ChirpController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ChirpRequest $request)
     {
-
-        $validated = $request->validate([
-            'message' => 'required|string|max:255',
-        ]);
-
-        $chirp = new Chirp($validated);
+        $chirp = new Chirp($request->only(['message']));
         $request->user()->chirps()->save($chirp);
-        ChirpCreated::dispatch($chirp);
+        event(new ChirpCreated($chirp));
         return back();
     }
 
@@ -76,10 +72,11 @@ class ChirpController extends Controller
            'replies.user:id,name',
            'inReplyTo',
            'inReplyTo.user:id,name'])
-           ->withCount('likes', 'replies')
+           ->withCount('likes', 'replies', 'rechirps')
            ->findOrFail($chirp->id);
 
        $chirp->isLike = $chirp->likes()->where('user_id', auth()->id())->exists();
+       $chirp->isRechirp = $chirp->rechirps()->where('user_id', auth()->id())->exists();
         return Inertia::render('Chirps/Show',
         [
             'chirp'=>$chirp
@@ -98,15 +95,11 @@ class ChirpController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Chirp $chirp):RedirectResponse
+    public function update(ChirpRequest $request, Chirp $chirp):RedirectResponse
     {
         $this->authorize('update', $chirp);
 
-        $validated = $request->validate([
-            'message' => 'required|string|max:255',
-        ]);
-
-        $chirp->update($validated);
+        $chirp->update($request->validated());
 
         return redirect(route('chirps.index'));
     }

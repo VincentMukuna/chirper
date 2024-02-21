@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             'email'=>'test2@gmail.com'
         ]);
          User::factory(5)
-             ->hasChirps(2)
+             ->hasChirps(5)
              ->create();
 
     }

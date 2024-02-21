@@ -23,6 +23,8 @@ class Chirp extends Model
     protected $hidden=[
     ];
 
+
+
     public function user():BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -34,6 +36,8 @@ class Chirp extends Model
             ->belongsToMany(User::class, 'chirp_likes', 'chirp_id', 'user_id')
             ->withTimestamps();
     }
+
+
 
     public function replies():HasMany
     {
@@ -70,4 +74,7 @@ class Chirp extends Model
     {
         return $this->belongsTo(Chirp::class, 'replying_to');
     }
+
+
+
 }
