@@ -2,25 +2,29 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import {User, UserActions, UserAvatar, UserDetails} from "@/Components/User.jsx";
 import SearchInput from "@/Components/SearchInput.jsx";
 import {router} from "@inertiajs/react";
-import {useRef} from "react";
+import {useRef, useState} from "react";
+import useSearchParams from "@/hooks/useSearchParams.jsx";
+import {debounce, throttle} from "lodash";
 
 export default function Index({auth, users, search}){
+    const params =useSearchParams();
+    const [highlight, setHighlight] = useState(params.get('search')||'');
     const searchRef = useRef();
 
-    function handleSearch(e){
+    const handleSearch = throttle( (e)=>{
         e.preventDefault();
-        console.log('Search: ', searchRef.current.value);
-
         router.get(
             route('users.index', {'search':searchRef.current.value}),
             {},
             {
                 preserveScroll:true,
+                preserveState:true,
+                onSuccess:()=>setHighlight(searchRef.current.value)
 
             }
         )
 
-    }
+    }, 500);
 
     return(
         <AuthenticatedLayout
@@ -35,6 +39,8 @@ export default function Index({auth, users, search}){
                             defaultValue={search}
                             ref={searchRef}
                             placeholder={'Search'}
+                            onChange={handleSearch}
+                            isFocused={true}
                         />
                     </form>
 
@@ -48,7 +54,7 @@ export default function Index({auth, users, search}){
                         {users.map((user) => (
                             <User key={user.id} user={user}>
                                 <UserAvatar/>
-                                <UserDetails/>
+                                <UserDetails highlight={highlight}/>
                                 <UserActions/>
                             </User>
                         ))}
