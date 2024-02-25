@@ -62,10 +62,10 @@ export function ChirpHeader() {
                         ?
                         <>
                             <Link
-                                href={route('users.show', {user: chirp.original_chirp.user.id})}
+                                href={route('users.show', {user: chirp.rechirped_chirp.chirper.id})}
                                 className="text-gray-800 hover:underline"
                             >
-                                {chirp.original_chirp.user.name}
+                                {chirp.rechirped_chirp.user.name}
                             </Link>
                             <span className={'text-gray-500'}>via</span>
 
@@ -75,7 +75,7 @@ export function ChirpHeader() {
                         href={route('users.show', {user: chirp.user.id})}
                         className="text-gray-800 hover:underline"
                     >
-                        {chirp.user.name}
+                        {chirp.chirper.name}
                     </Link>
 
 
@@ -171,7 +171,7 @@ export function ChirpBody(){
                 <>
                     <Link
                         href={route('chirps.show', [chirp.rechirping||chirp.id])}
-                        className="mt-3 text-lg test-gray-900 flex flex-col gap-2"
+                        className="mt-3 test-gray-900 flex flex-col gap-2"
                     >
                         {chirp.message}
 
@@ -186,20 +186,19 @@ export function ChirpBody(){
 
 
 export function ChirpActions() {
-    const {chirp, editing} = useChirp();
 
-    const [isLike, setIsLike] = useState(chirp.isLike);
+    const {chirp, editing} = useChirp();
+    const [isLike, setIsLike] = useState(chirp.is_like);
     const [likes, setLikes] = useState(chirp.likes_count);
 
-    const [isRechirped, setIsRechirped] = useState(chirp.isRechirp);
+    const [isRechirped, setIsRechirped] = useState(chirp.is_rechirp);
     const [rechirps, setRechirps] = useState(chirp.rechirps_count);
 
     const onToggleLike = () => {
-        router.patch(route(isLike ? 'chirps.unlike' : 'chirps.like', {chirp: chirp.id}),
+        router.patch(route('chirps.toggle-like', {chirp: chirp.id}),
             {},
             {
                 preserveScroll: true,
-                preserveState: true,
             })
         setLikes(prev => isLike ? prev - 1 : prev + 1)
         setIsLike(prev => !prev)
