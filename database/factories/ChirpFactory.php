@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Chirp;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,18 @@ class ChirpFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id'=>User::inRandomOrder()->first()->id,
             'message'=>fake()->realText(100),
         ];
+    }
+
+    public function replies():Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'user_id'=>User::inRandomOrder()->first()->id,
+                'replying_to'=>Chirp::inRandomOrder()->first()->id
+            ];
+        });
     }
 }
