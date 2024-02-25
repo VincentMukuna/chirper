@@ -10,7 +10,9 @@ import {Chirp, ChirpActions, ChirpAvatar, ChirpBody, ChirpContent, ChirpHeader} 
 export default function Index({auth, chirps}) {
     const {data, setData, post, processing, reset, errors} = useForm({
         message: '',
-    })
+    });
+
+    console.log("CHIRPS: ", chirps)
 
     const submit = (e) => {
         e.preventDefault();
@@ -39,7 +41,7 @@ export default function Index({auth, chirps}) {
                     <PrimaryButton className="mt-4" disabled={processing}>Chirp</PrimaryButton>
                 </form>
                 <div className="mt-6 bg-white shadow-sm rounded-lg divide-y">
-                    {chirps.map((chirp) => (
+                    {chirps.data.map((chirp) => (
                         <Chirp key={chirp.id} chirp={chirp}>
                             <ChirpAvatar />
                             <ChirpContent>

@@ -28,6 +28,7 @@ export default function Show({chirp, auth}){
                                 <ChirpContent>
                                     <ChirpHeader />
                                     <ChirpBody />
+                                    <ChirpActions />
                                 </ChirpContent>
                             </Chirp>
                         ))}

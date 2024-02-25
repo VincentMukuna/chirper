@@ -22,19 +22,11 @@ class ChirpController extends Controller
     {
         $user= auth()->user();
         $chirps = Chirp
-            ::with(['user:id,name', 'originalChirp','originalChirp.user:id,name'])
-            ->withCount(['likes', 'rechirps', 'replies'])
+            ::with(['user:id,name'])
             ->latest()
             ->isReply(false)
-            ->limit(10)
-            ->get()
-            ->map(function (Chirp $chirp) use ($user) {
-                $chirp->isLike = $user->likedChirps()->where('chirp_id', $chirp->id)->exists();
-                $chirp->isRechirp = $chirp->rechirps()->where('user_id', $user->id)->exists();
-                return $chirp;
-            })
+            ->paginate()
         ;
-
 
         return Inertia::render('Chirps/Index',
             [
@@ -72,11 +64,7 @@ class ChirpController extends Controller
            'replies.user:id,name',
            'inReplyTo',
            'inReplyTo.user:id,name'])
-           ->withCount('likes', 'replies', 'rechirps')
            ->findOrFail($chirp->id);
-
-       $chirp->isLike = $chirp->likes()->where('user_id', auth()->id())->exists();
-       $chirp->isRechirp = $chirp->rechirps()->where('user_id', auth()->id())->exists();
         return Inertia::render('Chirps/Show',
         [
             'chirp'=>$chirp
