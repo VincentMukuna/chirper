@@ -55,6 +55,7 @@ Route::middleware(['auth', 'verified'])->group(function (){
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('chirps/{chirp}/like', [LikeController::class, 'like'])->name('chirps.like');
     Route::patch('chirps/{chirp}/unlike', [LikeController::class, 'dislike'])->name('chirps.unlike');
+    Route::patch('chirps/{chirp}/toggle-like', [LikeController::class, 'toggle'])->name('chirps.toggle-like');
     Route::post('chirps/{chirp}/rechirp', [RechirpController::class, 'rechirp'])->name('chirps.rechirp');
     Route::post('chirps/{chirp}/undo-rechirp', [RechirpController::class, 'undo_rechirp'])->name('chirps.undo_rechirp');
 
