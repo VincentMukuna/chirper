@@ -53,7 +53,7 @@ class NewChirp extends Notification
 
     public function shouldSend(User $notifiable): bool
     {
-        return $notifiable->isFollowing($this->chirp->user->id);
+        return $notifiable->isNot($this->chirp->user);
     }
 
     /**
