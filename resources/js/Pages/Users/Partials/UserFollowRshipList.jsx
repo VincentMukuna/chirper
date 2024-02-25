@@ -31,6 +31,7 @@ export default function UserFollowRshipList({user, list='following'}){
                                     <User key={user.id} user={user} className={'py-3 ps-2 rounded-md'}>
                                         <UserAvatar/>
                                         <UserDetails/>
+                                        <UserActions/>
                                     </User>
                                 ))
                                 :
