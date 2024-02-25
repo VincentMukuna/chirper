@@ -2,7 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {Head, router} from "@inertiajs/react";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import {Tab} from "@headlessui/react";
-import {Chirp, ChirpAvatar, ChirpBody, ChirpContent, ChirpHeader} from "@/Components/Chirp.jsx";
+import {Chirp, ChirpActions, ChirpAvatar, ChirpBody, ChirpContent, ChirpHeader} from "@/Components/Chirp.jsx";
 import {useState} from "react";
 import {cn} from "@/lib/utils.js";
 import dayjs from "dayjs";
@@ -10,16 +10,28 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import SecondaryButton from "@/Components/SecondaryButton.jsx";
 import Modal from "@/Components/Modal.jsx";
 import UserFollowRshipList from "@/Pages/Users/Partials/UserFollowRshipList.jsx";
+import useSearchParams from "@/hooks/useSearchParams.jsx";
 
 dayjs.extend(relativeTime);
 
-export default function Show({auth, user, userFollows}){
-    const [selectedTab, setSelectedTab] = useState(0);
+export default function Show({auth, user}){
+    const tabs = [
+        {id :'chirps',name: 'Chirps', chirps: user.posts},
+        {id :'replies',name: 'Replies', chirps: user.replies},
+        {id :'likes',name: 'Likes', chirps: user.liked_chirps.map(likedChirp=>likedChirp.chirp)}
+    ]
+    const params = useSearchParams();
+
+    const [selectedTab, setSelectedTab] = useState(tabs.findIndex(tab=>tab.id===params.get('tab'))||'0');
     const [showingFollowRships, setShowingFollowRships]=useState(undefined);
 
     function onCloseModal(){
         setShowingFollowRships(undefined);
     }
+
+
+
+
 
     const onToggleFollow=()=>{
         router.post(
@@ -86,7 +98,7 @@ export default function Show({auth, user, userFollows}){
                                     Edit Profile
                                 </SecondaryButton>
                                 :
-                                userFollows
+                                user.is_following
                                     ?
                                     <SecondaryButton
                                         onClick={() => onToggleFollow()}
@@ -105,52 +117,38 @@ export default function Show({auth, user, userFollows}){
                     </div>
 
 
-                    <Tab.Group selectedIndex={selectedTab} onChange={(val)=>setSelectedTab(val)}  >
+                    <Tab.Group selectedIndex={selectedTab} onChange={(val)=> {
+                        history.pushState(null, '', `?tab=${tabs[val].id}`)
+                        setSelectedTab(val)
+                    }}  >
                         <Tab.List className='flex gap-4 justify-around mt-6 border-y py-2 '>
-                            <Tab  className={cn('p-1 border-b-2 border-transparent focus-visible:outline-none', {'border-indigo-800':selectedTab===0})}>Chirps</Tab>
-                            <Tab className={cn('p-1 border-b-2 border-transparent focus-visible:outline-none', {'border-indigo-800':selectedTab===1})}>Replies</Tab>
-                            <Tab className={cn('p-1 border-b-2 border-transparent focus-visible:outline-none', {'border-indigo-800':selectedTab===2})}>Likes</Tab>
+                            {tabs.map((tab, index)=>(
+                                <Tab
+                                    value={tab.id}
+                                    key={tab.id}
+                                    className={({selected})=>cn('py-2 px-4 rounded-md', selected?'bg-gray-100':'')}
+                                >
+                                    {tab.name}
+                                </Tab>
+                            ))}
                         </Tab.List>
                         <Tab.Panels>
-                            <Tab.Panel tabIndex={1}>
-                                <div className='divide-y'>
-                                    {user.posts.map(chirp => (
-                                        <Chirp chirp={chirp} key={chirp.id}>
-                                            <ChirpAvatar />
-                                            <ChirpContent>
-                                                <ChirpHeader />
-                                                <ChirpBody />
-                                            </ChirpContent>
-                                        </Chirp>
-                                    ))}
-                                </div>
-                            </Tab.Panel>
-                            <Tab.Panel tabIndex={2}>
-                                <div className='divide-y'>
-                                    {user.replies.map(chirp => (
-                                        <Chirp chirp={chirp} key={chirp.id}>
-                                            <ChirpAvatar />
-                                            <ChirpContent>
-                                                <ChirpHeader />
-                                                <ChirpBody />
-                                            </ChirpContent>
-                                        </Chirp>
-                                    ))}
-                                </div>
-                            </Tab.Panel>
-                            <Tab.Panel tabIndex={3}>
-                                <div className='divide-y'>
-                                    {user.liked_chirps.map(chirp=>(
-                                        <Chirp chirp={chirp.chirp} key={chirp.id} >
-                                            <ChirpAvatar />
-                                            <ChirpContent>
-                                                <ChirpHeader />
-                                                <ChirpBody />
-                                            </ChirpContent>
-                                        </Chirp>
-                                    ))}
-                                </div>
-                            </Tab.Panel>
+                            {tabs.map((tab, index)=>(
+                                <Tab.Panel id={tab.id} key={tab.id} className='mt-4'>
+                                    <div className={'flex flex-col divide-y'}>
+                                        {tab.chirps.map(chirp=>(
+                                            <Chirp key={chirp.id} chirp={chirp}>
+                                                <ChirpAvatar/>
+                                                <ChirpContent>
+                                                    <ChirpHeader/>
+                                                    <ChirpBody/>
+                                                    <ChirpActions/>
+                                                </ChirpContent>
+                                            </Chirp>
+                                        ))}
+                                    </div>
+                                </Tab.Panel>
+                            ))}
                         </Tab.Panels>
                     </Tab.Group>
                 </div>
