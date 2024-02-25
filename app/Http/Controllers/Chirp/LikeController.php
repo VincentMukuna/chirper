@@ -11,6 +11,7 @@ class LikeController extends Controller
     public function like(Chirp $chirp)
     {
         $chirp->likes()->attach(auth()->id());
+        $chirp->save();
         event(new ChirpLiked($chirp, auth()->user()));
         return back();
     }
@@ -18,7 +19,14 @@ class LikeController extends Controller
     public function dislike(Chirp $chirp)
     {
         $chirp->likes()->detach(auth()->id());
+        $chirp->save();
         return back();
 
+    }
+
+    public function toggle(Chirp $chirp)
+    {
+        $chirp->likes()->toggle(auth()->id());
+        return back();
     }
 }
