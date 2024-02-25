@@ -41,6 +41,70 @@ class ChirpLikeTest extends TestCase
         $this->assertTrue($chirp->refresh()->likes()->count()===1);
     }
 
+public function test_can_dislike_chirp():void
+    {
+        $user = User::factory()->create();
+        $liker = User::factory()->create();
+
+        $chirp = Chirp::factory()->create([
+            'user_id'=>$user->id,
+        ]);
+
+        $chirp->likes()->attach($liker->id);
+
+        $response = $this
+            ->actingAs($liker)
+            ->from(route('chirps.index'))
+            ->patch(route('chirps.unlike', [
+                'chirp'=>$chirp->id,
+            ]));
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('chirps.index'));
+
+        $this->assertTrue($chirp->refresh()->likes()->count()===0);
+    }
+
+    public function test_can_toggle_like()
+    {
+        $user = User::factory()->create();
+        $liker = User::factory()->create();
+
+        $chirp = Chirp::factory()->create([
+            'user_id'=>$user->id,
+        ]);
+
+        $response = $this
+            ->actingAs($liker)
+            ->from(route('chirps.index'))
+            ->patch(route('chirps.toggle-like', [
+                'chirp'=>$chirp->id,
+            ]));
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('chirps.index'));
+
+        $this->assertTrue($chirp->refresh()->likes()->count()===1);
+
+        $response = $this
+            ->actingAs($liker)
+            ->from(route('chirps.index'))
+            ->patch(route('chirps.toggle-like', [
+                'chirp'=>$chirp->id,
+            ]));
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('chirps.index'));
+
+        $this->assertTrue($chirp->refresh()->likes()->count()===0);
+
+    }
+
+
+
     private function likeChirp(User $liker, Chirp $chirp): \Illuminate\Testing\TestResponse
     {
         return $this
