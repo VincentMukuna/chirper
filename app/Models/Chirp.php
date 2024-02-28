@@ -166,10 +166,6 @@ class Chirp extends Model
     {
         return Attribute::make(
             get: function ($value, $attributes) {
-                if(isset($attributes['rechirping'])){
-                    $chirp = Chirp::find($attributes['rechirping']);
-                    return $chirp->user;
-                }
                 return $this->user;
             }
         );
