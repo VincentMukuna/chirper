@@ -16,12 +16,20 @@ class FollowController extends Controller
         return $user->followers()->get();
     }
     public function toggleFollow(User $user){
+        if ($user->is(auth()->user())){
+            return back()->withErrors([
+                'follow'=>'Cannot follow yourself',
+            ]);
+        };
+        $user->followers()->toggle(auth()->id());
+        $user->refresh();
 
-        if ($user->isFollowedBy(auth()->id())){
-            return $this->destroy($user);
-        }else{
-            return $this->create($user);
+        if ($user->followers()->where('follower_id', auth()->id())->exists()){
+
+            event(new UserFollowed($user, auth()->user()));
         }
+
+        return back();
     }
     public function create(User $user){
 
