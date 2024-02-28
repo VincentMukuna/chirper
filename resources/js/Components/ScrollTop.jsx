@@ -27,7 +27,7 @@ export default function ScrollTop(){
             <button
                 aria-label="Scroll To Top"
                 onClick={handleScrollTop}
-                className="rounded-full shadow bg-gray-200 p-2 text-indigo-500 border-indigo-400 border transition-all hover:bg-gray-300 "
+                className="rounded-full shadow bg-gray-100 p-2 text-indigo-500 border border-indigo-400 transition-all hover:bg-gray-300 "
             >
                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path
