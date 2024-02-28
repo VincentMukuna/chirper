@@ -17,7 +17,7 @@ export function Chirp({chirp, classname, children}) {
 
     return (
         <ChirpContext.Provider value={{chirp, editing, setEditing}}>
-            <div className={cn("p-6 flex space-x-4 hover:bg-indigo-50 transition-all", classname)}>
+            <div className={cn("p-3 sm:p-6 flex space-x-4 hover:bg-gray-50 transition-all", classname)}>
                 {children}
             </div>
         </ChirpContext.Provider>
@@ -56,14 +56,14 @@ export function ChirpHeader() {
 
     return (
         <>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-baseline">
                 <div className='flex items-center gap-2'>
                     {chirp.rechirping
                         ?
                         <>
                             <Link
                                 href={route('users.show', {user: chirp.rechirped_chirp.chirper.id})}
-                                className="text-gray-800 hover:underline"
+                                className="text-gray-800 hover:underline line-clamp-1"
                             >
                                 {chirp.rechirped_chirp.user.name}
                             </Link>
@@ -73,23 +73,14 @@ export function ChirpHeader() {
                         : null}
                     <Link
                         href={route('users.show', {user: chirp.user.id})}
-                        className="text-gray-800 hover:underline"
+                        className="text-gray-800 hover:underline line-clamp-1"
                     >
                         {chirp.chirper.name}
                     </Link>
 
 
-                    <small className="ml-2 text-xs text-gray-500">{dayjs(chirp.created_at).fromNow()}</small>
-                    {chirp.rechirping
-                        ?
-                        <Link
-                            href={route('chirps.show', {chirp: chirp.rechirping})}
-                            className="ml-2 text-xs text-blue-800 hover:underline"
-                        >
-                            see original
-                        </Link>
-                        : null
-                    }
+                    <small className="ml-2 text-xs text-gray-500 line-clamp-1">{dayjs(chirp.created_at).fromNow()}</small>
+
                     {chirp.in_reply_to
                         ?
                         <Link
