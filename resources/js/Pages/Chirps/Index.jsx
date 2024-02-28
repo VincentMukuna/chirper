@@ -4,6 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import InputError from "@/Components/InputError.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import {Chirp, ChirpActions, ChirpAvatar, ChirpBody, ChirpContent, ChirpHeader} from "@/Components/Chirp.jsx";
+import ScrollTop from "@/Components/ScrollTop.jsx";
 
 
 
@@ -11,9 +12,6 @@ export default function Index({auth, chirps}) {
     const {data, setData, post, processing, reset, errors} = useForm({
         message: '',
     });
-
-    console.log("CHIRPS: ", chirps)
-
     const submit = (e) => {
         e.preventDefault();
         post(route('chirps.store'), {
@@ -54,6 +52,8 @@ export default function Index({auth, chirps}) {
                     }
                 </div>
             </div>
+
+            <ScrollTop />
         </AuthenticatedLayout>
     )
 }
