@@ -17,7 +17,7 @@ export default function Show({chirp, auth}){
                             <ChirpActions/>
                         </ChirpContent>
                     </Chirp>
-                    <div className='ms-12 my-4'>
+                    <div className='md:ms-12 my-4'>
                         <ReplyForm chirp={chirp}/>
                     </div>
 
