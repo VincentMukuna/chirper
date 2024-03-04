@@ -27,8 +27,10 @@ class SendChirpCreatedNotifications implements ShouldQueue
             ->chirp
             ->user
             ->followers()
-            ->each(function (User $user)use ($event){
-                $user->notify(new NewChirp($event->chirp));
+            ->chunk(100, function ($followers) use ($event) {
+                $followers->each(function (User $follower) use ($event) {
+                    $follower->notify(new NewChirp($event->chirp));
+                });
             })
         ;
     }
