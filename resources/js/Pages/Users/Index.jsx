@@ -5,6 +5,7 @@ import {router} from "@inertiajs/react";
 import {useRef, useState} from "react";
 import useSearchParams from "@/hooks/useSearchParams.jsx";
 import {debounce, throttle} from "lodash";
+import Paginator from "@/Components/Paginator.jsx";
 
 export default function Index({auth, users, search}){
     const params =useSearchParams();
@@ -48,17 +49,20 @@ export default function Index({auth, users, search}){
             }
         >
             <div className="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
-                {users.length
+                {users.data.length
                     ?
-                    <div className="bg-white shadow-sm rounded-lg divide-y">
-                        {users.map((user) => (
-                            <User key={user.id} user={user}>
-                                <UserAvatar/>
-                                <UserDetails highlight={highlight}/>
-                                <UserActions/>
-                            </User>
-                        ))}
-                    </div>
+                    <>
+                        <div className="bg-white shadow-sm rounded-lg divide-y">
+                            {users.data.map((user) => (
+                                <User key={user.id} user={user}>
+                                    <UserAvatar/>
+                                    <UserDetails highlight={highlight}/>
+                                    <UserActions/>
+                                </User>
+                            ))}
+                        </div>
+                        <Paginator />
+                    </>
                     :
                     <div className='mt-6 max-w-sm mx-auto flex flex-col gap-4 items-center justify-center text-center'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"

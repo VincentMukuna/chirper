@@ -5,7 +5,8 @@ import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import Highlight from "@/Components/Highlight.jsx";
 import SecondaryButton from "@/Components/SecondaryButton.jsx";
 
-const UserContext=createContext();
+
+const UserContext=createContext({user: null});
 
 
 export function User({user, children, className}){
