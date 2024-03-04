@@ -23,6 +23,7 @@
     "dependencies": {
         "clsx": "^2.1.0",
         "dayjs": "^1.11.10",
+        "react-hot-toast": "^2.4.1",
         "tailwind-merge": "^2.2.1"
     }
 }
